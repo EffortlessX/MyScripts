@@ -1,311 +1,183 @@
-print("Universal Gui made by EffortlessX.")
+--[[
 
-local uis = game:GetService("UserInputService")
+Thank you for using Effortless X!
+
+Current presets:
+- Toggle
+- Activate
+
+Name the presets in alphabetic order for them
+to appear in the order you want them to.
+Parent the presets to the 'Main' frame.
+
+]]--
+
 local Gui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
-Gui.Name = "UniversalGui"
+Gui.Name = "Effortless X"
+Gui.DisplayOrder = math.huge
 Gui.ResetOnSpawn = false
+Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-local Background = Instance.new("Frame",Gui)
-Background.Name = "Background"
-Background.Size = UDim2.new(0.4,0,0.5,0)
-Background.AnchorPoint = Vector2.new(0.5,0.5)
-Background.Position = UDim2.new(0.5,0,0.5,0)
-Background.BackgroundColor3 = Color3.fromRGB(55,55,75)
-Instance.new("UICorner",Background).CornerRadius = UDim.new(0.03,0)
-
-local BgImage = Instance.new("ImageLabel",Background)
-BgImage.Name = "BgImage"
-BgImage.Size = UDim2.new(1,0,1,0)
-BgImage.BackgroundTransparency = 1
-BgImage.ImageTransparency = 0.8
-BgImage.Image = "http://www.roblox.com/asset/?id=14210323232"
-BgImage.ScaleType = Enum.ScaleType.Tile
-BgImage.TileSize = UDim2.new(0,200,0,100)
-
-local Stroke = Instance.new("UIStroke",Background)
-Stroke.Color = Color3.fromRGB(30,30,40)
-Stroke.Thickness = 3
+local Bg = Instance.new("Frame",Gui)
+Bg.Name = "Background"
+Bg.BackgroundTransparency = 1
+Bg.Size = UDim2.new(0.45,0,0.6,0)
+Bg.Position = UDim2.new(0.5,0,0.5,0)
+Bg.AnchorPoint = Vector2.new(0.5,0.5)
+Instance.new("UIListLayout",Bg).Padding = UDim.new(-0.02,0)
 
 local Presets = Instance.new("Folder",Gui)
 Presets.Name = "Presets"
 
-local PresetRadio = Instance.new("Frame",Presets)
-PresetRadio.Name = "PresetRadio"
-PresetRadio.Visible = false
-PresetRadio.BackgroundTransparency = 1
-PresetRadio.Size = UDim2.new(0.8,0,0.1,0)
+local Toggle = Instance.new("Frame",Presets)
+Toggle.Name = "Toggle"
+Toggle.Visible = false
+Toggle.BackgroundColor3 = Color3.fromRGB(50,50,50)
+Toggle.Size = UDim2.new(1,0,0.1,0)
+Instance.new("UICorner",Toggle).CornerRadius = UDim.new(0.2,0)
+local Padding = Instance.new("UIPadding",Toggle)
+Padding.PaddingBottom = UDim.new(0.15,0)
+Padding.PaddingLeft = UDim.new(0.02,0)
+Padding.PaddingRight = UDim.new(0.02,0)
+Padding.PaddingTop = UDim.new(0.15,0)
 
-local Checkbox = Instance.new("ImageButton",PresetRadio)
-Checkbox.Name = "Checkbox"
-Checkbox.ImageTransparency = 1
-Checkbox.BackgroundColor3 = Color3.fromRGB(50,50,75)
-Checkbox.Size = UDim2.new(0.06,0,1,0)
-Instance.new("UICorner",Checkbox).CornerRadius = UDim.new(0.4,0)
+local Button = Instance.new("TextButton",Toggle)
+Button.Name = "Button"
+Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+Button.AnchorPoint = Vector2.new(1,0)
+Button.Position = UDim2.new(1,0,0,0)
+Button.Size = UDim2.new(0.13,0,1,0)
+Button.Text = "Toggle"
+Button.TextColor3 = Color3.fromRGB(255,255,255)
+Button.FontFace.Weight = Enum.FontWeight.SemiBold
+Button.TextSize = 10
+Instance.new("UICorner",Button).CornerRadius = UDim.new(0.3,0)
 
-local Stroke = Instance.new("UIStroke",Checkbox)
-Stroke.Color = Color3.fromRGB(40,40,55)
-Stroke.Thickness = 2
+local Desc = Instance.new("TextLabel",Toggle)
+Desc.Name = "Desc"
+Desc.BackgroundTransparency = 1
+Desc.Size = UDim2.new(0.6,0,1,0)
+Desc.TextSize = 10
+Desc.TextColor3 = Color3.fromRGB(255,255,255)
+Desc.FontFace.Weight = Enum.FontWeight.SemiBold
+Desc.TextXAlignment = Enum.TextXAlignment.Left
 
-local Check = Instance.new("ImageLabel",Checkbox)
-Check.Name = "Check"
-Check.Size = UDim2.new(0.7,0,0.7,0)
-Check.BackgroundTransparency = 1
-Check.Image = "http://www.roblox.com/asset/?id=12690727184"
-Check.Position = UDim2.new(0.5,0,0.5,0)
-Check.AnchorPoint = Vector2.new(0.5,0.5)
-Check.ImageTransparency = 1
+local Activate = Instance.new("Frame",Presets)
+Activate.Name = "Activate"
+Activate.Visible = false
+Activate.BackgroundColor3 = Color3.fromRGB(50,50,50)
+Activate.Size = UDim2.new(1,0,0.1,0)
+Instance.new("UICorner",Activate).CornerRadius = UDim.new(0.2,0)
+local Padding = Instance.new("UIPadding",Activate)
+Padding.PaddingBottom = UDim.new(0.15,0)
+Padding.PaddingLeft = UDim.new(0.02,0)
+Padding.PaddingRight = UDim.new(0.02,0)
+Padding.PaddingTop = UDim.new(0.15,0)
 
-local Description = Instance.new("TextLabel",PresetRadio)
-Description.Name = "Description"
-Description.BackgroundTransparency = 1
-Description.Position = UDim2.new(0.1,0,0,0)
-Description.Size = UDim2.new(0.8,0,1,0)
-Description.Font = Enum.Font.RobotoMono
-Description.TextColor3 = Color3.fromRGB(255,255,255)
-Description.TextSize = 14
-Description.TextXAlignment = Enum.TextXAlignment.Left
+local Button = Instance.new("TextButton",Activate)
+Button.Name = "Button"
+Button.BackgroundColor3 = Color3.fromRGB(150,200,220)
+Button.AnchorPoint = Vector2.new(1,0)
+Button.Position = UDim2.new(1,0,0,0)
+Button.Size = UDim2.new(0.13,0,1,0)
+Button.Text = "Activate"
+Button.TextColor3 = Color3.fromRGB(255,255,255)
+Button.FontFace.Weight = Enum.FontWeight.SemiBold
+Button.TextSize = 10
+Instance.new("UICorner",Button).CornerRadius = UDim.new(0.3,0)
 
-local Main = Instance.new("Frame",Background)
-Main.Name = "Main"
-Main.BackgroundTransparency = 1
-Main.Position = UDim2.new(0,0,0.15,0)
-Main.Size = UDim2.new(1,0,0.85,0)
-Instance.new("UIListLayout",Main).Padding = UDim.new(0.05,0)
+local Desc = Instance.new("TextLabel",Activate)
+Desc.Name = "Desc"
+Desc.BackgroundTransparency = 1
+Desc.Size = UDim2.new(0.6,0,1,0)
+Desc.TextSize = 10
+Desc.TextColor3 = Color3.fromRGB(255,255,255)
+Desc.FontFace.Weight = Enum.FontWeight.SemiBold
+Desc.TextXAlignment = Enum.TextXAlignment.Left
 
-local Padding = Instance.new("UIPadding",Main)
-Padding.PaddingBottom = UDim.new(0.1,0)
-Padding.PaddingLeft = UDim.new(0.03,0)
-Padding.PaddingRight = UDim.new(0.08,0)
-Padding.PaddingTop = UDim.new(0.1,0)
+local Divide = Instance.new("Frame",Bg)
+Divide.Name = "1"
+Divide.BackgroundColor3 = Color3.fromRGB(150,200,220)
+Divide.Size = UDim2.new(1,0,0.01,0)
+Divide.ZIndex = 2
+Divide.BorderSizePixel = 0
 
-local Settings = Instance.new("Frame",Background)
-Settings.Name = "Settings"
-Settings.Visible = false
-Settings.BackgroundTransparency = 1
-Settings.Position = UDim2.new(0,0,0.15,0)
-Settings.Size = UDim2.new(1,0,0.85,0)
-Instance.new("UIListLayout",Settings).Padding = UDim.new(0.05,0)
-
-local Padding = Instance.new("UIPadding",Settings)
-Padding.PaddingBottom = UDim.new(0.1,0)
-Padding.PaddingLeft = UDim.new(0.03,0)
-Padding.PaddingRight = UDim.new(0.08,0)
-Padding.PaddingTop = UDim.new(0.1,0)
-
-local Image = PresetRadio:Clone()
-Image.Visible = true
-Image.Name = "Image"
-Image.Parent = Settings
-Image.Checkbox.Check.ImageTransparency = 0
-Image.Description.Text = "Use an image as background"
-Image.Description.TextSize = 14
-
-local Url = PresetRadio:Clone()
-Url.Visible = true
-Url.Name = "Url"
-Url.Parent = Settings
-Url.Checkbox:Destroy()
-Url.Description:Destroy()
-
-local Box = Instance.new("TextBox",Url)
-Box.Size = UDim2.new(0.6,0,1,0)
-Box.PlaceholderText = "Image Url"
-Box.TextColor3 = Color3.fromRGB(255,255,255)
-Box.Text = "http://www.roblox.com/asset/?id=14210323232"
-Box.TextScaled = true
-Box.BackgroundColor3 = Color3.fromRGB(50,50,75)
-Instance.new("UICorner",Box).CornerRadius = UDim.new(0.4,0)
-
-local Stroke = Instance.new("UIStroke",Box)
-Stroke.Thickness = 2
-Stroke.Color = Color3.fromRGB(40,40,55)
-
-local ResetBox = Instance.new("TextButton",Url)
-ResetBox.BackgroundColor3 = Color3.fromRGB(50,50,75)
-ResetBox.Position = UDim2.new(0.63,0,0,0)
-ResetBox.Size = UDim2.new(0.15,0,1,0)
-ResetBox.Font = Enum.Font.RobotoMono
-ResetBox.TextColor3 = Color3.fromRGB(255,255,255)
-ResetBox.Text = "Reset"
-ResetBox.TextSize = 14
-Instance.new("UICorner",ResetBox).CornerRadius = UDim.new(0.4,0)
-
-local Stroke = Instance.new("UIStroke",ResetBox)
-Stroke.Thickness = 2
-Stroke.Color = Color3.fromRGB(40,40,55)
-
-local TileSize = PresetRadio:Clone()
-TileSize.Visible = true
-TileSize.Name = "TileSize"
-TileSize.Parent = Settings
-TileSize.Checkbox:Destroy()
-TileSize.Description.Size = UDim2.new(0.15,0,1,0)
-TileSize.Description.Text = "by"
-TileSize.Description.Position = UDim2.new(0.2,0,0,0)
-TileSize.Description.TextXAlignment = Enum.TextXAlignment.Center
-
-local BoxX = Instance.new("TextBox",TileSize)
-BoxX.BackgroundColor3 = Color3.fromRGB(50,50,75)
-BoxX.Text = "200"
-BoxX.TextSize = 14
-BoxX.TextColor3 = Color3.fromRGB(255,255,255)
-BoxX.Font = Enum.Font.RobotoMono
-BoxX.Size = UDim2.new(0.2,0,1,0)
-Instance.new("UICorner",BoxX).CornerRadius = UDim.new(0.4,0)
-
-local Stroke = Instance.new("UIStroke",BoxX)
-Stroke.Thickness = 2
-Stroke.Color = Color3.fromRGB(40,40,55)
-
-local BoxY = Instance.new("TextBox",TileSize)
-BoxY.BackgroundColor3 = Color3.fromRGB(50,50,75)
-BoxY.Text = "100"
-BoxY.TextSize = 14
-BoxY.TextColor3 = Color3.fromRGB(255,255,255)
-BoxY.Font = Enum.Font.RobotoMono
-BoxY.Position = UDim2.new(0.35,0,0.0)
-BoxY.Size = UDim2.new(0.2,0,1,0)
-Instance.new("UICorner",BoxY).CornerRadius = UDim.new(0.4,0)
-
-local Stroke = Instance.new("UIStroke",BoxY)
-Stroke.Thickness = 2
-Stroke.Color = Color3.fromRGB(40,40,55)
-
-local Delete = PresetRadio:Clone()
-Delete.Visible = true
-Delete.Name = "zDelete"
-Delete.Parent = Settings
-Delete.Checkbox.Check:Destroy()
-Delete.Description.Text = "Delete this GUI"
-
-local Top = Instance.new("Frame",Background)
-Top.Name = "Top"
-Top.Size = UDim2.new(1,0,0.15,0)
-Top.BackgroundTransparency = 1
-
-local Padding = Instance.new("UIPadding",Top)
-Padding.PaddingBottom = UDim.new(0.2,0)
-Padding.PaddingLeft = UDim.new(0.03,0)
-Padding.PaddingRight = UDim.new(0.03,0)
-Padding.PaddingTop = UDim.new(0.2,0)
-
-local MainButton = Instance.new("TextButton",Top)
-MainButton.Name = "Main"
-MainButton.BackgroundColor3 = Color3.fromRGB(45,45,65)
-MainButton.Size = UDim2.new(0.13,0,1,0)
-MainButton.Text = ""
-Instance.new("UICorner",MainButton).CornerRadius = UDim.new(0.3,0)
-
-local Text = Instance.new("TextLabel",MainButton)
-Text.Text = "Main"
-Text.Font = Enum.Font.RobotoMono
-Text.TextColor3 = Color3.fromRGB(255,255,255)
-Text.BackgroundTransparency = 1
-Text.AnchorPoint = Vector2.new(0.5,0.5)
-Text.Size = UDim2.new(0.8,0,0.65,0)
-Text.Position = UDim2.new(0.5,0,0.5,0)
-Text.TextScaled = true
-
-local SettingsButton = Instance.new("TextButton",Top)
-SettingsButton.Name = "Settings"
-SettingsButton.BackgroundColor3 = Color3.fromRGB(45,45,65)
-SettingsButton.Size = UDim2.new(0.18,0,1,0)
-SettingsButton.Position = UDim2.new(0.15,0,0,0)
-SettingsButton.Text = ""
-Instance.new("UICorner",SettingsButton).CornerRadius = UDim.new(0.3,0)
-
-local Text = Instance.new("TextLabel",SettingsButton)
-Text.Text = "Settings"
-Text.Font = Enum.Font.RobotoMono
-Text.TextColor3 = Color3.fromRGB(255,255,255)
-Text.BackgroundTransparency = 1
-Text.AnchorPoint = Vector2.new(0.5,0.5)
-Text.Size = UDim2.new(0.8,0,0.65,0)
-Text.Position = UDim2.new(0.5,0,0.5,0)
-Text.TextScaled = true
-
-local Close = Instance.new("TextButton",Top)
-Close.Name = "Close"
-Close.BackgroundColor3 = Color3.fromRGB(45,45,65)
-Close.Size = UDim2.new(0.06,0,1,0)
-Close.Position = UDim2.new(0.95,0,0,0)
-Close.Text = ""
-Instance.new("UICorner",Close).CornerRadius = UDim.new(0.3,0)
-
-local Text = Instance.new("TextLabel",Close)
-Text.Text = "X"
-Text.Font = Enum.Font.RobotoMono
-Text.TextColor3 = Color3.fromRGB(255,255,255)
-Text.BackgroundTransparency = 1
-Text.AnchorPoint = Vector2.new(0.5,0.5)
-Text.Size = UDim2.new(0.8,0,0.65,0)
-Text.Position = UDim2.new(0.5,0,0.5,0)
-Text.TextScaled = true
+local Top = Instance.new("Frame",Bg)
+Top.Name = "0"
+Top.BackgroundColor3 = Color3.fromRGB(35,35,35)
+Top.Size = UDim2.new(1,0,0.1,0)
+Instance.new("UICorner",Top).CornerRadius = UDim.new(0.2,0)
 
 local Text = Instance.new("TextLabel",Top)
 Text.BackgroundTransparency = 1
-Text.Text = "P: show/hide gui"
-Text.TextColor3 = Color3.fromRGB(255,255,255)
-Text.Font = Enum.Font.RobotoMono
-Text.TextSize = 14
-Text.Size = UDim2.new(0.15,0,1,0)
-Text.Position = UDim2.new(0.45,0,0,0)
+Text.Position = UDim2.new(0,0,0.12,0)
+Text.Size = UDim2.new(1,0,0.6,0)
+Text.FontFace.Weight = Enum.FontWeight.Bold
+Text.TextColor3 = Color3.fromRGB(150,200,220)
+Text.Text = "Effortless X"
+Text.TextScaled = true
 
-local Border = Instance.new("Frame",Top)
-Border.BackgroundColor3 = Color3.fromRGB(30,30,40)
-Border.Position = UDim2.new(-0.035,0,1.4,0)
-Border.Size = UDim2.new(1.07,0,0.1,0)
+local Main = Instance.new("Frame",Bg)
+Main.Name = "Main"
+Main.BackgroundColor3 = Color3.fromRGB(25,25,25)
+Main.Size = UDim2.new(1,0,0.93,0)
+Main.ZIndex = 0
+Instance.new("UICorner",Main).CornerRadius = UDim.new(0.03,0)
+Instance.new("UIListLayout",Main).Padding = UDim.new(0.03,0)
+local Padding = Instance.new("UIPadding",Main)
+Padding.PaddingBottom = UDim.new(0,0)
+Padding.PaddingLeft = UDim.new(0.02,0)
+Padding.PaddingRight = UDim.new(0.02,0)
+Padding.PaddingTop = UDim.new(0.05,0)
 
-MainButton.MouseButton1Down:Connect(function()
-	Main.Visible = true
-	Settings.Visible = false
-end)
+local Text = Instance.new("TextLabel",Main)
+Text.Name = "0"
+Text.Text = "Press P to open/close the GUI."
+Text.TextColor3 = Color3.fromRGB(200,200,200)
+Text.BackgroundTransparency = 1
+Text.Size = UDim2.new(1,0,0.06,0)
+Text.TextSize = 8
 
-SettingsButton.MouseButton1Down:Connect(function()
-	Main.Visible = false
-	Settings.Visible = true
-end)
+local Lag = Activate:Clone()
+Lag.Parent = Main
+Lag.Name = "1"
+Lag.Visible = true
+Lag.Desc.Text = "Remove possible lag"
 
-Close.MouseButton1Down:Connect(function()
-	Background.Visible = false
-end)
-
-Box.FocusLost:Connect(function()
-	BgImage.Image = Box.Text
-end)
-
-ResetBox.MouseButton1Down:Connect(function()
-	BgImage.Image = "http://www.roblox.com/asset/?id=14210323232"
-end)
-
-BoxX.FocusLost:Connect(function()
-	BgImage.TileSize = UDim2.new(0,tonumber(BoxX.Text),0,tonumber(BoxY.Text))
-end)
-
-BoxY.FocusLost:Connect(function()
-	BgImage.TileSize = UDim2.new(0,tonumber(BoxX.Text),0,tonumber(BoxY.Text))
-end)
-
-Delete.Checkbox.MouseButton1Down:Connect(function()
-	Gui:Destroy()
+local uis = game:GetService("UserInputService")
+uis.InputBegan:Connect(function(input,gpe)
+	if not gpe and input.KeyCode == Enum.KeyCode.P then
+		Bg.Visible = not Bg.Visible
+	end
 end)
 
 Gui:GetPropertyChangedSignal("Enabled"):Connect(function()
-	if not Gui.Enabled then
-		Gui.Enabled = true
-	end
-end)
-Image.Checkbox.MouseButton1Down:Connect(function()
-	BgImage.Visible = not BgImage.Visible
-	if Image.Checkbox.Check.ImageTransparency == 0 then
-		Image.Checkbox.Check.ImageTransparency = 1
-	else
-		Image.Checkbox.Check.ImageTransparency = 0
-	end
+	Gui.Enabled = true
 end)
 
-uis.InputBegan:Connect(function(input,gpe)
-	if input.KeyCode == Enum.KeyCode.P and not gpe then
-		Background.Visible = not Background.Visible
+Lag.Button.MouseButton1Down:Once(function()
+	Lag.Button.Text = "Active"
+	Lag.Button.AutoButtonColor = false
+	local Light = game:GetService("Lighting")
+	for i,v in pairs(Light:GetChildren()) do
+		v:Destroy()
+	end
+	Light.FogEnd = 9999
+	Light.Ambient = Color3.fromRGB(0,0,0)
+	Light.FogStart = 9998
+	Light.OutdoorAmbient = Color3.fromRGB(0,0,0)
+	Light.ExposureCompensation = 0
+	Light.GlobalShadows = false
+	Light.ShadowSoftness = 0
+	Light.Brightness = 3
+	Light.ChildAdded:Connect(function(child)
+		child:Destroy()
+	end)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("Model") then
+			v.LevelOfDetail = Enum.ModelLevelOfDetail.Automatic
+		elseif v:IsA("Light") then
+			v:Destroy()
+		end
 	end
 end)

@@ -3,12 +3,14 @@
 Thank you for using Effortless X!
 
 Current presets:
-- Toggle
-- Activate
+- Toggle (Children: Button, Keybind, Desc)
+- Activate (Children: Button, Desc)
 
 Name the presets in alphabetic order for them
 to appear in the order you want them to.
+
 Parent the presets to the 'Main' frame.
+Name the presets AFTER placing in 'Main' for automation.
 
 ]]--
 
@@ -53,6 +55,18 @@ Button.FontFace.Weight = Enum.FontWeight.SemiBold
 Button.TextSize = 10
 Instance.new("UICorner",Button).CornerRadius = UDim.new(0.3,0)
 
+local Keybind = Instance.new("TextBox",Toggle)
+Keybind.Name = "Keybind"
+Keybind.BackgroundColor3 = Color3.fromRGB(70,70,70)
+Keybind.Position = UDim2.new(0.85,0,0,0)
+Keybind.AnchorPoint = Vector2.new(1,0)
+Keybind.Size = UDim2.new(0.08,0,1,0)
+Keybind.Text = ""
+Keybind.PlaceholderText = "Key"
+Keybind.TextSize = 8
+Keybind.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner",Keybind).CornerRadius = UDim.new(0.3,0)
+
 local Desc = Instance.new("TextLabel",Toggle)
 Desc.Name = "Desc"
 Desc.BackgroundTransparency = 1
@@ -86,6 +100,18 @@ Button.FontFace.Weight = Enum.FontWeight.SemiBold
 Button.TextSize = 10
 Instance.new("UICorner",Button).CornerRadius = UDim.new(0.3,0)
 
+local Text = Instance.new("TextLabel",Activate)
+Text.BackgroundColor3 = Color3.fromRGB(150,200,220)
+Text.AnchorPoint = Vector2.new(1,0)
+Text.Position = UDim2.new(1,0,0,0)
+Text.Size = UDim2.new(0.13,0,1,0)
+Text.Text = "Active"
+Text.TextColor3 = Color3.fromRGB(255,255,255)
+Text.FontFace.Weight = Enum.FontWeight.SemiBold
+Text.TextSize = 10
+Text.ZIndex = 0
+Instance.new("UICorner",Text).CornerRadius = UDim.new(0.3,0)
+
 local Desc = Instance.new("TextLabel",Activate)
 Desc.Name = "Desc"
 Desc.BackgroundTransparency = 1
@@ -107,6 +133,15 @@ Top.Name = "0"
 Top.BackgroundColor3 = Color3.fromRGB(35,35,35)
 Top.Size = UDim2.new(1,0,0.1,0)
 Instance.new("UICorner",Top).CornerRadius = UDim.new(0.2,0)
+
+local Close = Instance.new("TextButton",Top)
+Close.AnchorPoint = Vector2.new(1,0.65)
+Close.Position = UDim2.new(0.995,0,0.5,0)
+Close.Size = UDim2.new(0.05,0,0.4,0)
+Close.Text = "X"
+Close.TextScaled = true
+Close.BackgroundTransparency = 1
+Close.TextColor3 = Color3.fromRGB(255,255,255)
 
 local Text = Instance.new("TextLabel",Top)
 Text.BackgroundTransparency = 1
@@ -130,13 +165,41 @@ Padding.PaddingLeft = UDim.new(0.02,0)
 Padding.PaddingRight = UDim.new(0.02,0)
 Padding.PaddingTop = UDim.new(0.05,0)
 
-local Text = Instance.new("TextLabel",Main)
+local Frame = Instance.new("Frame",Main)
+Frame.Name = "0"
+Frame.BackgroundTransparency = 1
+Frame.Size = UDim2.new(1,0,0.06,0)
+
+local Text = Instance.new("TextLabel",Frame)
 Text.Name = "0"
-Text.Text = "Press P to open/close the GUI."
+Text.Text = "Press  "
 Text.TextColor3 = Color3.fromRGB(200,200,200)
 Text.BackgroundTransparency = 1
-Text.Size = UDim2.new(1,0,0.06,0)
+Text.Size = UDim2.new(0.05,0,1,0)
 Text.TextSize = 8
+Text.TextXAlignment = Enum.TextXAlignment.Right
+Text.Position = UDim2.new(0.02,0,0,0)
+
+local Text = Instance.new("TextLabel",Frame)
+Text.Name = "z"
+Text.Text = " to open/close the Gui"
+Text.TextColor3 = Color3.fromRGB(200,200,200)
+Text.BackgroundTransparency = 1
+Text.Size = UDim2.new(0.4,0,1,0)
+Text.TextSize = 8
+Text.TextXAlignment = Enum.TextXAlignment.Left
+Text.Position = UDim2.new(0.13,0,0,0)
+
+local OCBox = Instance.new("TextBox",Frame)
+OCBox.Size = UDim2.new(0.05,0,1,0)
+OCBox.BackgroundColor3 = Color3.fromRGB(70,70,70)
+OCBox.TextColor3 = Color3.fromRGB(255,255,255)
+OCBox.Name = "OpenCloseBox"
+OCBox.TextSize = 7
+OCBox.Text = "P"
+OCBox.PlaceholderText = "key"
+OCBox.Position = UDim2.new(0.07,0,0,0)
+Instance.new("UICorner",OCBox).CornerRadius = UDim.new(0.3,0)
 
 local Lag = Activate:Clone()
 Lag.Parent = Main
@@ -145,19 +208,66 @@ Lag.Visible = true
 Lag.Desc.Text = "Remove possible lag"
 
 local uis = game:GetService("UserInputService")
+local CloseKey = Enum.KeyCode.P
 uis.InputBegan:Connect(function(input,gpe)
-	if not gpe and input.KeyCode == Enum.KeyCode.P then
+	if not gpe and input.KeyCode == CloseKey then
 		Bg.Visible = not Bg.Visible
 	end
+end)
+OCBox.FocusLost:Connect(function()
+	local Key = string.upper(OCBox.Text)
+	if #Key ~= 1 then
+		Key = string.sub(Key,1,1)
+	end
+	OCBox.Text = Key
+	CloseKey = Enum.KeyCode[Key]
+end)
+
+Close.MouseButton1Down:Connect(function()
+	Bg.Visible = false
 end)
 
 Gui:GetPropertyChangedSignal("Enabled"):Connect(function()
 	Gui.Enabled = true
 end)
 
+Main.ChildAdded:Connect(function(Child)
+	local Name = Child.Name
+	if Name == "Toggle" then
+		local Kb = Enum.KeyCode.F4
+		uis.InputBegan:Connect(function(Input,gpe)
+			if not gpe and Input.KeyCode == Kb then
+				if Child.Button.BackgroundColor3 == Color3.fromRGB(200,0,0) then
+					Child.Button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+				else
+					Child.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+				end
+			end
+		end)
+		Child.Button.MouseButton1Down:Connect(function()
+			if Child.Button.BackgroundColor3 == Color3.fromRGB(200,0,0) then
+				Child.Button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+			else
+				Child.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+			end
+		end)
+		Child.Keybind.FocusLost:Connect(function()
+			local Key = string.upper(Child.Keybind.Text)
+			if #Key ~= 1 then
+				Key = string.sub(Key,1,1)
+			end
+			Child.Keybind.Text = Key
+			Kb = Enum.KeyCode[Key]
+		end)
+	elseif Name == "Activate" then
+		Child.Button.MouseButton1Down:Connect(function()
+			Child.Button:Destroy()
+		end)
+	end
+end)
+
 Lag.Button.MouseButton1Down:Once(function()
-	Lag.Button.Text = "Active"
-	Lag.Button.AutoButtonColor = false
+	Lag.Button:Destroy()
 	local Light = game:GetService("Lighting")
 	for i,v in pairs(Light:GetChildren()) do
 		v:Destroy()

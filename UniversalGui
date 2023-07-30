@@ -15,6 +15,8 @@ Bg.BackgroundTransparency = 1
 Bg.Size = UDim2.new(0.45,0,0.6,0)
 Bg.Position = UDim2.new(0.5,0,0.5,0)
 Bg.AnchorPoint = Vector2.new(0.5,0.5)
+Bg.Active = true
+Bg.Draggable = true
 local Layout = Instance.new("UIListLayout",Bg)
 Layout.Padding = UDim.new(-0.02,0)
 Layout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -298,15 +300,20 @@ end)
 -- FUNCTIONS
 
 local prefix = _G.EffortlessXFunctions
-function prefix.EffortlessSetMainColor(color3)
+function prefix.SetMainColor(color3)
 	Main.BackgroundColor3 = color3
 end
 function prefix.SetTopbarColor(color3)
 	Top.BackgroundColor3 = color3
 end
-function prefix.SetBackgroundColor(color3)
-	Top.BackgroundColor3 = Color3.new(color3.R+0.02,color3.G+0.02,color3.B+0.02)
-	Main.BackgroundColor3 = Color3.new(color3.R-0.02,color3.G-0.02,color3.B-0.02)
+function prefix.SetBackgroundColor(color3,comp)
+	if comp then
+		Top.BackgroundColor3 = Color3.new(color3.R+0.02,color3.G+0.02,color3.B+0.02)
+		Main.BackgroundColor3 = Color3.new(color3.R-0.02,color3.G-0.02,color3.B-0.02)
+	else
+		Top.BackgroundColor3 = color3
+		Main.BackgroundColor3 = color3
+	end
 end
 function prefix.SetDecorColor(color3)
 	Divide.BackgroundColor3 = color3
@@ -352,6 +359,9 @@ function prefix.CreateRow(sort,desc)
 		return Row
 	end
 	return nil
+end
+function prefix.DraggableGui(bool)
+	Bg.Draggable = bool
 end
 
 wait(0.1)

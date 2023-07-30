@@ -1,21 +1,58 @@
-Effortless X - Roblox Exploits
+How to use the Universal Gui.
+
+Setup:
+
+1. Load the gui using `loadstring(game.HttpGet("https://github.com/EffortlessX/MyScripts/blob/main/UniversalGui"))()`.
+2. Wait until the gui has loaded using `repeat wait() until _G.EffortlessXLoaded`.
 
 
-Universal Gui (in development):
+Customization:
 
-The Universal Gui was made to easily use exploits on Roblox.
-You can use the gui by executing the line
-`loadstring(game.HttpGet("https://github.com/EffortlessX/MyScripts/blob/main/UniversalGui"))()`
-and use its functions to customize the gui to your liking.
+You can easily customize the gui with premade functions. These functions are stored in `_G.EffortlessXFunctions`.
+It is recommend to define that as a variable, as it can be annoying to write that for every function you call.
+Example:
+```
+loadstring(game.HttpGet("https://github.com/EffortlessX/MyScripts/blob/main/UniversalGui"))()
+repeat wait() until _G.EffortlessXLoaded
+local Functions = _G.EffortlessXFunctions
+Functions.CreateRow("Toggle","This is a toggle row.")
+```
 
-Universal Exploits (in development):
+All functions:
 
-I've made Roblox exploits myself too, which can easily be accessed
-using the Universal Exploits. When executed, it will check what game
-you are playing and use the Universal Gui to let you use the exploit.
-Currently there are exploits for:
-- Arsenal (Patched)
-- Jailbreak (Patched)
+`SetMainColor(color: Color3)`
+Sets the color of the main background.
+
+`SetTopbarColor(color: Color3)`
+Sets the color of the topbar background.
+
+`SetBackgroundColor(color: Color3, compensate: Bool)`
+Sets the color of the topbar and main background.
+Compensate: Make the topbar background a bit lighter, and the main background a bit darker.
+
+`SetDecorColor(color: Color3)`
+Sets the color of the 'Effortless X' text and line below the topbar.
+
+`SetTextColor(color: Color3)`
+Sets the color of all text.
+
+`SetButtonColor(color: Color3)`
+Sets the color of all buttons.
+
+`SetRowColor(color: Color3)`
+Sets the color of all rows.
+
+`SetPlaceholderColor(color: Color3)`
+Sets the color of the placeholder text.
+
+`CreateRow(type: String, description: String)`
+Create a row on the gui.
+Type: The type of row to add.
+Description: The description of the row.
+
+`DraggableGui(enabled: Bool)`
+Changes if the gui can be dragged around.
 
 
-This project is still in development!
+
+

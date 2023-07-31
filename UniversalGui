@@ -28,7 +28,7 @@ local Toggle = Instance.new("Frame",Presets)
 Toggle.Name = "Toggle"
 Toggle.Visible = false
 Toggle.BackgroundColor3 = Color3.fromRGB(50,50,50)
-Toggle.Size = UDim2.new(1,0,0.1,0)
+Toggle.Size = UDim2.new(1,0,0,35)
 Instance.new("UICorner",Toggle).CornerRadius = UDim.new(0.2,0)
 local Padding = Instance.new("UIPadding",Toggle)
 Padding.PaddingBottom = UDim.new(0.15,0)
@@ -73,7 +73,7 @@ local Activate = Instance.new("Frame",Presets)
 Activate.Name = "Activate"
 Activate.Visible = false
 Activate.BackgroundColor3 = Color3.fromRGB(50,50,50)
-Activate.Size = UDim2.new(1,0,0.1,0)
+Activate.Size = UDim2.new(1,0,0,35)
 Instance.new("UICorner",Activate).CornerRadius = UDim.new(0.2,0)
 local Padding = Instance.new("UIPadding",Activate)
 Padding.PaddingBottom = UDim.new(0.15,0)
@@ -150,12 +150,21 @@ Text.TextColor3 = Color3.fromRGB(150,200,220)
 Text.Text = "Effortless X"
 Text.TextScaled = true
 
-local Main = Instance.new("Frame",Bg)
+local Filler = Instance.new("Frame",Bg)
+Filler.Size = UDim2.new(1,0,0.06,0)
+Filler.BackgroundColor3 = Color3.fromRGB(25,25,25)
+Filler.LayoutOrder = 2
+Filler.BorderSizePixel = 0
+Filler.ZIndex = -1
+
+local Main = Instance.new("ScrollingFrame",Bg)
+Main.ScrollBarThickness = 5
+Main.AutomaticCanvasSize = Enum.AutomaticSize.Y
 Main.Name = "Main"
-Main.LayoutOrder = 2
+Main.LayoutOrder = 3
 Main.BackgroundColor3 = Color3.fromRGB(25,25,25)
-Main.Size = UDim2.new(1,0,0.93,0)
-Main.ZIndex = 0
+Main.Size = UDim2.new(1,0,0.84,0)
+Main.BorderSizePixel = 0
 Instance.new("UICorner",Main).CornerRadius = UDim.new(0.03,0)
 local Layout = Instance.new("UIListLayout",Main)
 Layout.Padding = UDim.new(0.03,0)
@@ -164,12 +173,19 @@ local Padding = Instance.new("UIPadding",Main)
 Padding.PaddingBottom = UDim.new(0,0)
 Padding.PaddingLeft = UDim.new(0.02,0)
 Padding.PaddingRight = UDim.new(0.02,0)
-Padding.PaddingTop = UDim.new(0.05,0)
+Padding.PaddingTop = UDim.new(0.015,0)
+
+local Rounder = Instance.new("Frame",Bg)
+Rounder.Name = "Rounder"
+Rounder.BackgroundColor3 = Color3.fromRGB(25,25,25)
+Rounder.Size = UDim2.new(1,0,0.03,0)
+Rounder.LayoutOrder = 4
+Instance.new("UICorner",Rounder).CornerRadius = UDim.new(0.5,0)
 
 local Frame = Instance.new("Frame",Main)
 Frame.Name = "Transparent"
 Frame.BackgroundTransparency = 1
-Frame.Size = UDim2.new(1,0,0.06,0)
+Frame.Size = UDim2.new(1,0,0,15)
 Frame.LayoutOrder = 0
 
 local Text = Instance.new("TextLabel",Frame)
@@ -350,7 +366,7 @@ end
 local Order = 2
 function prefix.CreateRow(sort,desc)
 	local Row = Presets:FindFirstChild(sort):Clone() or nil
-	if Row and Order < 8 then
+	if Row then
 		Row.LayoutOrder = Order
 		Row.Desc.Text = desc
 		Row.Parent = Main

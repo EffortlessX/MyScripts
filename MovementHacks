@@ -1,0 +1,46 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EffortlessX/MyScripts/main/UniversalGui"))()
+local plr = game.Players.LocalPlayer
+local hrp = plr.Character.HumanoidRootPart
+local cam = workspace.CurrentCamera
+local mouse = plr:GetMouse()
+plr.CharacterAdded:Connect(function(chr)
+	hrp = chr:WaitForChild("HumanoidRootPart")
+	task.wait()
+	mouse = plr:GetMouse()
+end)
+local ex = _G.EXFunctions
+local cl = _G.EXClient
+local at = false
+function cl.Clicked()
+	at = not at
+end
+mouse.Button2Down:Connect(function()
+	if at then
+		hrp.CFrame = mouse.Hit * CFrame.new(0,3,0)
+	end
+end)
+ex.CreateRow("Toggle",cl.Clicked,"Right click to teleport")
+local at2 = false
+local cant = {}
+for i,v in pairs(plr.Character:GetChildren()) do
+  if v:IsA("MeshPart") or v:IsA("Part") and v.CanCollide = false then
+    table.insert(cant,v)
+  end
+end
+function cl.Clicked2()
+  at2 = not at2
+  if at2 then
+    for i,v in pairs(plr.Character:GetChildren()) do
+      if v:IsA("MeshPart") or v:IsA("Part") then
+        v.CanCollide = false
+      end
+    end
+  else
+    for i,v in pairs(plr.Character:GetChildren()) do
+      if v:IsA("MeshPart") or v:IsA("Part") and not table.find(cant,v) then
+        v.CanCollide = true
+      end
+    end
+  end
+end
+ex.CreateRow("Toggle",cl.Clicked2,"Noclip")

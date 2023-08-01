@@ -1,6 +1,7 @@
 print("Universal Gui made by Effortless X")
-_G.EffortlessXLoaded = false
-_G.EffortlessXFunctions = {}
+_G.EXLoaded = false
+_G.EXFunctions = {}
+_G.EXClient = {}
 
 local player = game.Players.LocalPlayer
 local Gui = Instance.new("ScreenGui",player.PlayerGui)
@@ -252,6 +253,8 @@ Gui:GetPropertyChangedSignal("Enabled"):Connect(function()
 	Gui.Enabled = true
 end)
 
+local IndexRow = {}
+local sender = _G.EXClient
 Main.ChildAdded:Connect(function(Child)
 	local Name = Child.Name
 	if Name == "Toggle" then
@@ -263,6 +266,11 @@ Main.ChildAdded:Connect(function(Child)
 				else
 					Child.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
 				end
+				for i,v in pairs(IndexRow) do
+					if v[1] == Child then
+						v[2]()
+					end
+				end
 			end
 		end)
 		Child.Button.MouseButton1Down:Connect(function()
@@ -270,6 +278,11 @@ Main.ChildAdded:Connect(function(Child)
 				Child.Button.BackgroundColor3 = Color3.fromRGB(0,200,0)
 			else
 				Child.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+			end
+			for i,v in pairs(IndexRow) do
+				if v[1] == Child then
+					v[2]()
+				end
 			end
 		end)
 		Child.Keybind.FocusLost:Connect(function()
@@ -315,7 +328,7 @@ end)
 
 -- FUNCTIONS
 
-local prefix = _G.EffortlessXFunctions
+local prefix = _G.EXFunctions
 function prefix.SetMainColor(color3)
 	Main.BackgroundColor3 = color3
 end
@@ -364,9 +377,10 @@ function prefix.SetPlaceholderColor(color3)
 	end
 end
 local Order = 2
-function prefix.CreateRow(sort,desc)
+function prefix.CreateRow(sort,func,desc)
 	local Row = Presets:FindFirstChild(sort):Clone() or nil
 	if Row then
+		table.insert(IndexRow,{Row,func})
 		Row.LayoutOrder = Order
 		Row.Desc.Text = desc
 		Row.Parent = Main
@@ -384,4 +398,4 @@ wait(0.1)
 script.Parent = Gui
 script.Name = "GuiScript"
 task.wait()
-_G.EffortlessXLoaded = true
+_G.EXLoaded = true

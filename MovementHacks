@@ -23,7 +23,7 @@ ex.CreateRow("Toggle",cl.Clicked,"Right click to teleport")
 local at2 = false
 local cant = {}
 for i,v in pairs(plr.Character:GetChildren()) do
-  if v:IsA("MeshPart") or v:IsA("Part") and v.CanCollide = false then
+  if v:IsA("MeshPart") or v:IsA("Part") and v.CanCollide == false then
     table.insert(cant,v)
   end
 end

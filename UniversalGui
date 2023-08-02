@@ -150,6 +150,39 @@ Desc.TextColor3 = Color3.fromRGB(255,255,255)
 Desc.FontFace.Weight = Enum.FontWeight.SemiBold
 Desc.TextXAlignment = Enum.TextXAlignment.Left
 
+local Click = Instance.new("Frame",Presets)
+Click.Name = "Click"
+Click.Visible = false
+Click.BackgroundColor3 = Color3.fromRGB(50,50,50)
+Click.Size = UDim2.new(1,0,0,35)
+Instance.new("UICorner",Click).CornerRadius = UDim.new(0.2,0)
+local Padding = Instance.new("UIPadding",Click)
+Padding.PaddingBottom = UDim.new(0.15,0)
+Padding.PaddingLeft = UDim.new(0.02,0)
+Padding.PaddingRight = UDim.new(0.02,0)
+Padding.PaddingTop = UDim.new(0.15,0)
+
+local Button = Instance.new("TextButton",Click)
+Button.Name = "Button"
+Button.BackgroundColor3 = Color3.fromRGB(150,200,220)
+Button.AnchorPoint = Vector2.new(1,0)
+Button.Position = UDim2.new(1,0,0,0)
+Button.Size = UDim2.new(0.13,0,1,0)
+Button.Text = "Click"
+Button.TextColor3 = Color3.fromRGB(255,255,255)
+Button.FontFace.Weight = Enum.FontWeight.SemiBold
+Button.TextSize = 10
+Instance.new("UICorner",Button).CornerRadius = UDim.new(0.3,0)
+
+local Desc = Instance.new("TextLabel",Click)
+Desc.Name = "Desc"
+Desc.BackgroundTransparency = 1
+Desc.Size = UDim2.new(0.6,0,1,0)
+Desc.TextSize = 10
+Desc.TextColor3 = Color3.fromRGB(255,255,255)
+Desc.FontFace.Weight = Enum.FontWeight.SemiBold
+Desc.TextXAlignment = Enum.TextXAlignment.Left
+
 local Divide = Instance.new("Frame",Bg)
 Divide.Name = "Divide"
 Divide.LayoutOrder = 1
@@ -289,6 +322,14 @@ end)
 
 local IndexRow = {}
 local sender = _G.EXClient
+local function FireFunction(Child)
+	for i,v in pairs(IndexRow) do
+		if v[1] == Child then
+			v[2]()
+			break
+		end
+	end
+end
 Main.ChildAdded:Connect(function(Child)
 	local Name = Child.Name
 	if Name == "Toggle" then
@@ -300,11 +341,7 @@ Main.ChildAdded:Connect(function(Child)
 				else
 					Child.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
 				end
-				for i,v in pairs(IndexRow) do
-					if v[1] == Child then
-						v[2]()
-					end
-				end
+				FireFunction(Child)
 			end
 		end)
 		Child.Button.MouseButton1Down:Connect(function()
@@ -313,11 +350,7 @@ Main.ChildAdded:Connect(function(Child)
 			else
 				Child.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
 			end
-			for i,v in pairs(IndexRow) do
-				if v[1] == Child then
-					v[2]()
-				end
-			end
+			FireFunction(Child)
 		end)
 		Child.Keybind.FocusLost:Connect(function()
 			local Key = string.upper(Child.Keybind.Text)
@@ -331,14 +364,13 @@ Main.ChildAdded:Connect(function(Child)
 		Child.Button.MouseButton1Down:Connect(function()
 			Child.Button:Destroy()
 		end)
-		
+	elseif Name == "Click" then
+		Child.Button.MouseButton1Down:Connect(function()
+			FireFunction(Child)
+		end)
 	elseif Name == "UserInput" then
 		Child.Box.FocusLost:Connect(function()
-			for i,v in pairs(IndexRow) do
-				if v[1] == Child then
-					v[2](Child.Box.Text)
-				end
-			end
+			FireFunction(Child)
 		end)
 	end
 end)

@@ -54,15 +54,18 @@ Sets the color of all rows.
 `SetPlaceholderColor(color: Color3)`
 Sets the color of the placeholder text.
 
+`DraggableGui(enabled: Bool)`
+Changes if the gui can be dragged around.
+
 `CreateRow(type: String, function: Function, description: String)`
 Create a row on the gui.
 Type: The type of row to add.
 Function: The function to call when the row is clicked.
 Description: The description of the row.
 
-`DraggableGui(enabled: Bool)`
-Changes if the gui can be dragged around.
-
-
+Row Types:
+- Toggle (Row with a toggle button)
+- Activate (Row that can be activated once)
+- UserInput (Row that can receive user input)
 
 

@@ -1,12 +1,3 @@
-local IDs = {
-	12355337193 -- Murderer vs Sherrifs
-	13788560 -- Zombie Rush
-}
-local ID = game.PlaceId
-if table.find(IDs,ID) then
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/EffortlessX/MyScripts/main/UniversalGui"))()
-	repeat wait() until _G.EXLoaded
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/EffortlessX/MyScripts/main/"..ID))()
-else
-	print("No Effortless X hacks for this game, sorry!")
-end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EffortlessX/MyScripts/main/UniversalGui"))()
+repeat wait() until _G.EXLoaded
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EffortlessX/MyScripts/main/"..game.PlaceId))()

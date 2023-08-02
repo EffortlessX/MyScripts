@@ -1,5 +1,6 @@
 local IDs = {
 	12355337193 -- Murderer vs Sherrifs
+	13788560 -- Zombie Rush
 }
 local ID = game.PlaceId
 if table.find(IDs,ID) then

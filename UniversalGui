@@ -14,10 +14,6 @@ player.CharacterAdded:Connect(function(char)
 	hmd = char:WaitForChild("Humanoid")
 	hrp = char:WaitForChild("HumanoidRootPart")
 end)
-local Early = player.PlayerGui:FindFirstChild("EffortlessX") or nil
-if Early then
-	Early:Destroy()
-end
 local Gui = Instance.new("ScreenGui",player.PlayerGui)
 Gui.Name = "EffortlessX"
 Gui.DisplayOrder = math.huge

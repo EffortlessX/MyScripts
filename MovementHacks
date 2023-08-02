@@ -105,16 +105,12 @@ ex.CreateRow("Toggle",cl.noclip2,"Noclip - v2 (experimental)")
 
 
 function cl.Walkspeed(input)
-	pcall(function()
-		chr.Humanoid.Walkspeed = tonumber(input)
-	end)
+	chr.Humanoid.Walkspeed = tonumber(input)
 end
 ex.CreateRow("UserInput",cl.Walkspeed,"Walkspeed")
 
 
 function cl.JumpHeight(input)
-	pcall(function()
-		chr.Humanoid.JumpHeight = tonumber(input)
-	end)
+	chr.Humanoid.JumpHeight = tonumber(input)
 end
 ex.CreateRow("UserInput",cl.JumpHeight,"Jump height")

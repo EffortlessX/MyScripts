@@ -3,7 +3,17 @@ _G.EXLoaded = false
 _G.EXFunctions = {}
 _G.EXClient = {}
 
+local ts = game:GetService("TweenService")
 local player = game.Players.LocalPlayer
+local chr = player.Character or player.CharacterAdded:Wait()
+local hmd = chr:WaitForChild("Humanoid")
+local hrp = chr:WaitForChild("HumanoidRootPart")
+local mouse = player:GetMouse()
+player.CharacterAdded:Connect(function(char)
+	chr = char
+	hmd = char:WaitForChild("Humanoid")
+	hrp = char:WaitForChild("HumanoidRootPart")
+end)
 local Gui = Instance.new("ScreenGui",player.PlayerGui)
 Gui.Name = "EffortlessX"
 Gui.DisplayOrder = math.huge
@@ -218,12 +228,36 @@ Text.TextColor3 = Color3.fromRGB(150,200,220)
 Text.Text = "Effortless X"
 Text.TextScaled = true
 
+local TopMain = Instance.new("TextButton",Top)
+TopMain.AutoButtonColor = false
+TopMain.AnchorPoint = Vector2.new(0,0.55)
+TopMain.Size = UDim2.new(0.12,0,0.6,0)
+TopMain.BackgroundColor3 = Color3.fromRGB(60,60,60)
+TopMain.Position = UDim2.new(0.01,0,0.4,0)
+TopMain.Text = "Game"
+TopMain.TextColor3 = Color3.fromRGB(255,255,255)
+TopMain.TextSize = 8
+Instance.new("UICorner",TopMain).CornerRadius = UDim.new(0.2,0)
+
+local TopMovement = Instance.new("TextButton",Top)
+TopMovement.AutoButtonColor = false
+TopMovement.AnchorPoint = Vector2.new(0,0.55)
+TopMovement.Size = UDim2.new(0.12,0,0.6,0)
+TopMovement.BackgroundColor3 = Color3.fromRGB(60,60,60)
+TopMovement.Position = UDim2.new(0.14,0,0.4,0)
+TopMovement.Text = "Movement"
+TopMovement.TextColor3 = Color3.fromRGB(255,255,255)
+TopMovement.TextSize = 8
+Instance.new("UICorner",TopMovement).CornerRadius = UDim.new(0.2,0)
+
 local Filler = Instance.new("Frame",Bg)
 Filler.Size = UDim2.new(1,0,0.06,0)
 Filler.BackgroundColor3 = Color3.fromRGB(25,25,25)
 Filler.LayoutOrder = 2
 Filler.BorderSizePixel = 0
 Filler.ZIndex = -1
+
+local MainActive = false
 
 local Main = Instance.new("ScrollingFrame",Bg)
 Main.ScrollBarThickness = 5
@@ -238,6 +272,25 @@ local Layout = Instance.new("UIListLayout",Main)
 Layout.Padding = UDim.new(0.03,0)
 Layout.SortOrder = Enum.SortOrder.LayoutOrder
 local Padding = Instance.new("UIPadding",Main)
+Padding.PaddingBottom = UDim.new(0,0)
+Padding.PaddingLeft = UDim.new(0.02,0)
+Padding.PaddingRight = UDim.new(0.02,0)
+Padding.PaddingTop = UDim.new(0.015,0)
+
+local Movement = Instance.new("ScrollingFrame",Bg)
+Movement.Visible = false
+Movement.ScrollBarThickness = 5
+Movement.AutomaticCanvasSize = Enum.AutomaticSize.Y
+Movement.Name = "Movement"
+Movement.LayoutOrder = 3
+Movement.BackgroundColor3 = Color3.fromRGB(25,25,25)
+Movement.Size = UDim2.new(1,0,0.84,0)
+Movement.BorderSizePixel = 0
+Instance.new("UICorner",Movement).CornerRadius = UDim.new(0.03,0)
+local Layout = Instance.new("UIListLayout",Movement)
+Layout.Padding = UDim.new(0.03,0)
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+local Padding = Instance.new("UIPadding",Movement)
 Padding.PaddingBottom = UDim.new(0,0)
 Padding.PaddingLeft = UDim.new(0.02,0)
 Padding.PaddingRight = UDim.new(0.02,0)
@@ -289,6 +342,154 @@ OCBox.Position = UDim2.new(0.07,0,0,0)
 Instance.new("UICorner",OCBox).CornerRadius = UDim.new(0.3,0)
 
 -- BASICS
+
+local tpBool = false
+local stpBool = false
+local tpFrame = Toggle:Clone()
+tpFrame.Visible = true
+tpFrame.Parent = Movement
+tpFrame.LayoutOrder = 1
+tpFrame.Desc.Text = "Right click to teleport"
+local stpFrame = Toggle:Clone()
+stpFrame.Visible = true
+stpFrame.Parent = Movement
+stpFrame.LayoutOrder = 2
+stpFrame.Desc.Text = "Right click to 'teleport' (safe teleport)"
+tpFrame.Button.MouseButton1Down:Connect(function()
+	tpBool = not tpBool
+	if tpBool then
+		tpFrame.Button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+	else
+		tpFrame.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+	end
+	if tpBool and stpBool then
+		stpBool = false
+		stpFrame.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+	end
+end)
+stpFrame.Button.MouseButton1Down:Connect(function()
+	stpBool = not stpBool
+	if stpBool then
+		stpFrame.Button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+	else
+		stpFrame.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+	end
+	if tpBool and stpBool then
+		tpBool = false
+		tpFrame.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+	end
+end)
+mouse.Button2Down:Connect(function()
+	if tpBool then
+		hrp.CFrame = mouse.Hit * CFrame.new(0,4,0)
+	elseif stpBool then
+		hrp.Anchored = true
+		local hit = mouse.Hit
+		local secs = (hrp.Position-Vector3.new(hit.X,hit.Y+4,hit.Z)).Magnitude/500
+		ts:Create(hrp,TweenInfo.new(secs,Enum.EasingStyle.Linear,Enum.EasingDirection.In,0,false),{CFrame = hit * CFrame.new(0,3,0)}):Play()
+		wait(secs)
+		hrp.Anchored = false
+	end
+end)
+
+
+local nc1Bool = false
+local cant = {}
+for i,v in pairs(player.Character:GetChildren()) do
+	if v:IsA("MeshPart") or v:IsA("Part") and v.CanCollide == false then
+		table.insert(cant,v)
+	end
+end
+local nc1Frame = Toggle:Clone()
+nc1Frame.Visible = true
+nc1Frame.Parent = Movement
+nc1Frame.LayoutOrder = 3
+nc1Frame.Desc.Text = "Noclip - v1"
+nc1Frame.Button.MouseButton1Down:Connect(function()
+	nc1Bool = not nc1Bool
+	if nc1Bool then
+		nc1Frame.Button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+		for i,v in pairs(player.Character:GetChildren()) do
+			if v:IsA("MeshPart") or v:IsA("Part") then
+				v.CanCollide = false
+			end
+		end
+	else
+		nc1Frame.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+		for i,v in pairs(player.Character:GetChildren()) do
+			if v:IsA("MeshPart") or v:IsA("Part") and not table.find(cant,v) then
+				v.CanCollide = true
+			end
+		end
+	end
+end)
+
+
+local nc2Bool = false
+local made = {}
+hrp.Touched:Connect(function(part)
+	if nc2Bool and part.Parent ~= chr and part.Parent.Parent ~= chr and part.Name ~= "XYZFLOOR" then
+		part.CanCollide = false
+		if not table.find(made,part) then
+			table.insert(made,part)
+			local floor = Instance.new("Part",workspace)
+			floor.Name = "XYZFLOOR"
+			floor.Size = Vector3.new(part.Size.X,1,part.Size.Z)
+			floor.Position = Vector3.new(part.Position.X,hrp.Position.Y-4,part.Position.Z)
+			floor.Transparency = 1
+			floor.Anchored = true
+		end
+	end
+end)
+local nc2Frame = Toggle:Clone()
+nc2Frame.Visible = true
+nc2Frame.Parent = Movement
+nc2Frame.LayoutOrder = 4
+nc2Frame.Desc.Text = "Noclip - v2 (experimental)"
+nc2Frame.Button.MouseButton1Down:Connect(function()
+	nc2Bool = not nc2Bool
+	if nc2Bool then
+		nc2Frame.Button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+	else
+		nc2Frame.Button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+		for i,v in pairs(made) do
+			v.CanCollide = true
+		end
+	end
+end)
+
+wsFrame = UserInput:Clone()
+wsFrame.Visible = true
+wsFrame.Parent = Movement
+wsFrame.LayoutOrder = 5
+wsFrame.Desc.Text = "Walkspeed"
+wsFrame.Box.FocusLost:Connect(function()
+	local input = tonumber(wsFrame.Box.Text)
+	if input then
+		hmd.WalkSpeed = input
+	end
+end)
+
+jhFrame = UserInput:Clone()
+jhFrame.Visible = true
+jhFrame.Parent = Movement
+jhFrame.LayoutOrder = 6
+jhFrame.Desc.Text = "Jump height"
+jhFrame.Box.FocusLost:Connect(function()
+	local input = tonumber(jhFrame.Box.Text)
+	if input then
+		hmd.JumpHeight = input
+	end
+end)
+
+TopMain.MouseButton1Down:Connect(function()
+	Main.Visible = true
+	Movement.Visible = false
+end)
+TopMovement.MouseButton1Down:Connect(function()
+	Main.Visible = false
+	Movement.Visible = true
+end)
 
 local Lag = Activate:Clone()
 Lag.Parent = Main

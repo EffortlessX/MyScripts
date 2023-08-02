@@ -65,7 +65,8 @@ Description: The description of the row.
 
 Row Types:
 - Toggle (Row with a toggle button)
-- Activate (Row that can be activated once)
+- Activate (Row that the user can activate once)
+- Click (Row with a clickable button)
 - UserInput (Row that can receive user input)
 
 

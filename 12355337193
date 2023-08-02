@@ -15,7 +15,7 @@ player:GetPropertyChangedSignal("Neutral"):Connect(function()
 	if not neutral then
 		team = player.Team.Name
 		for _,plr in pairs(players:GetChildren()) do
-			if (plr.Character.HumanoidRootPart.Position-hrp.Position).Magnitude > 400 and (plr.Neutral or plr.Team.Name ~= team) then
+			if (plr.Character.HumanoidRootPart.Position-hrp.Position).Magnitude > 400 then
 				table.insert(enemies,plr)
 			end
 		end

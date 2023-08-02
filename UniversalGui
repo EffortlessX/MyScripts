@@ -116,6 +116,40 @@ Desc.TextColor3 = Color3.fromRGB(255,255,255)
 Desc.FontFace.Weight = Enum.FontWeight.SemiBold
 Desc.TextXAlignment = Enum.TextXAlignment.Left
 
+local UserInput = Instance.new("Frame",Presets)
+UserInput.Name = "UserInput"
+UserInput.Visible = false
+UserInput.BackgroundColor3 = Color3.fromRGB(50,50,50)
+UserInput.Size = UDim2.new(1,0,0,35)
+Instance.new("UICorner",UserInput).CornerRadius = UDim.new(0.2,0)
+local Padding = Instance.new("UIPadding",UserInput)
+Padding.PaddingBottom = UDim.new(0.15,0)
+Padding.PaddingLeft = UDim.new(0.02,0)
+Padding.PaddingRight = UDim.new(0.02,0)
+Padding.PaddingTop = UDim.new(0.15,0)
+
+local Box = Instance.new("TextBox",UserInput)
+Box.Name = "Box"
+Box.BackgroundColor3 = Color3.fromRGB(70,70,70)
+Box.AnchorPoint = Vector2.new(1,0)
+Box.Position = UDim2.new(1,0,0,0)
+Box.Size = UDim2.new(0.13,0,1,0)
+Box.Text = ""
+Box.PlaceholderText = "Input"
+Box.TextColor3 = Color3.fromRGB(255,255,255)
+Box.FontFace.Weight = Enum.FontWeight.SemiBold
+Box.TextSize = 10
+Instance.new("UICorner",Box).CornerRadius = UDim.new(0.3,0)
+
+local Desc = Instance.new("TextLabel",UserInput)
+Desc.Name = "Desc"
+Desc.BackgroundTransparency = 1
+Desc.Size = UDim2.new(0.6,0,1,0)
+Desc.TextSize = 10
+Desc.TextColor3 = Color3.fromRGB(255,255,255)
+Desc.FontFace.Weight = Enum.FontWeight.SemiBold
+Desc.TextXAlignment = Enum.TextXAlignment.Left
+
 local Divide = Instance.new("Frame",Bg)
 Divide.Name = "Divide"
 Divide.LayoutOrder = 1
@@ -296,6 +330,15 @@ Main.ChildAdded:Connect(function(Child)
 	elseif Name == "Activate" then
 		Child.Button.MouseButton1Down:Connect(function()
 			Child.Button:Destroy()
+		end)
+		
+	elseif Name == "UserInput" then
+		Child.Box.FocusLost:Connect(function()
+			for i,v in pairs(IndexRow) do
+				if v[1] == Child then
+					v[2](Child.Box.Text)
+				end
+			end
 		end)
 	end
 end)

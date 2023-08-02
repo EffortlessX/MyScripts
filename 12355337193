@@ -1,0 +1,44 @@
+local cl = _G.EXClient
+local ex = _G.EXFunctions
+local enemies = {}
+local players = game.Players
+local player = players.LocalPlayer
+local hrp = player.Character.HumanoidRootPart
+local team = nil
+local neutral = player.Neutral
+if not neutral then
+	team = player.Team.Name
+end
+player:GetPropertyChangedSignal("Neutral"):Connect(function()
+	neutral = player.Neutral
+	enemies = {}
+	if not neutral then
+		team = player.Team.Name
+		for _,plr in pairs(players:GetChildren()) do
+			if (plr.Character.HumanoidRootPart.Position-hrp.Position).Magnitude > 400 and (plr.Neutral or plr.Team.Name ~= team) then
+				table.insert(enemies,plr)
+			end
+		end
+	else
+		team = nil
+	end
+end)
+players.PlayerRemoving:Connect(function(plr)
+	if table.find(enemies,plr) then
+		table.remove(enemies,table.find(enemies,plr))
+	end
+end)
+player.CharacterAdded:Connect(function(chr)
+	hrp = chr:WaitForChild("HumanoidRootPart")
+end)
+local tpActive = false
+function cl.TpToEnemy()
+	tpActive = not tpActive
+	if tpActive then
+		while tpActive do
+			hrp.CFrame = enemies[1].Character.HumanoidRootPart.CFrame * CFrame.new(0,0,6)
+			wait(1)
+		end
+	end
+end
+ex.CreateRow("Toggle",cl.TpToEnemy,"Teleport to enemies")

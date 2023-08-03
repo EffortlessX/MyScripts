@@ -1,3 +1,5 @@
+-- Murderers vs Sherrifs Duels (Not working!) --
+
 local cl = _G.EXClient
 local ex = _G.EXFunctions
 local enemies = {}

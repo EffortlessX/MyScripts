@@ -1,0 +1,37 @@
+-- Zombie Rush (hardcore) --
+
+local storage = workspace["Zombie Storage"]
+cl = _G.EXClient
+ex = _G.EXFunctions
+local part = Instance.new("Part",workspace)
+part.Anchored = true
+part.Size = Vector3.new(7,1,7)
+local cf = CFrame.new(15,0,0)
+local plr = game.Players.LocalPlayer
+local hrp = plr.Character.HumanoidRootPart
+plr.CharacterAdded:Connect(function(chr)
+  hrp = chr:WaitForChild("HumanoidRootPart")
+end)
+function cl.ZombieFarm()
+  print("Zombie farm clicked!")
+  part.Position = Vector3.new(0,0,0)
+  hrp.CFrame = CFrame.new(0,5,0)
+  for i,v in pairs(storage:GetChildren()) do
+    local root = v:WaitForChild("HumanoidRootPart")
+    root.Anchored = true
+    root.CFrame = cf
+    task.wait()
+  end
+  storage.ChildAdded:Connect(function(v)
+    local root = v:WaitForChild("HumanoidRootPart")
+    root.Anchored = true
+    root.CFrame = cf
+  end)
+  print("Zombie farm should be active!")
+  while wait(1) do
+    if (hrp.Position-Vector3.new(0,0,0)).Magnitude > 25 then
+      hrp.CFrame = CFrame.new(0,5,0)
+    end
+  end
+end
+ex.CreateRow("Activate",cl.ZombieFarm,"Farm zombies")

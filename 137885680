@@ -1,3 +1,5 @@
+-- Zombie Rush --
+
 local storage = workspace["Zombie Storage"]
 cl = _G.EXClient
 ex = _G.EXFunctions
@@ -20,7 +22,7 @@ function cl.ZombieFarm()
     root.CFrame = cf
     task.wait()
   end
-  storage.ChildAdded:Connect(function()
+  storage.ChildAdded:Connect(function(v)
     local root = v:WaitForChild("HumanoidRootPart")
     root.Anchored = true
     root.CFrame = cf

@@ -526,7 +526,11 @@ local sender = _G.EXClient
 local function FireFunction(Child)
 	for i,v in pairs(IndexRow) do
 		if v[1] == Child then
-			v[2]()
+			if v[1].Name == "UserInput" then
+				v[2](Child.Box.Text)
+			else
+				v[2]()
+			end
 			break
 		end
 	end
@@ -564,6 +568,7 @@ Main.ChildAdded:Connect(function(Child)
 	elseif Name == "Activate" then
 		Child.Button.MouseButton1Down:Connect(function()
 			Child.Button:Destroy()
+			FireFunction(Child)
 		end)
 	elseif Name == "Click" then
 		Child.Button.MouseButton1Down:Connect(function()

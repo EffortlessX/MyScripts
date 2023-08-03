@@ -11,6 +11,7 @@ plr.CharacterAdded:Connect(function(chr)
   hrp = chr:WaitForChild("HumanoidRootPart")
 end)
 function cl.ZombieFarm()
+  print("Zombie farm clicked!")
   part.Position = Vector3.new(0,0,0)
   hrp.CFrame = CFrame.new(0,5,0)
   for i,v in pairs(storage:GetChildren()) do
@@ -24,6 +25,7 @@ function cl.ZombieFarm()
     root.Anchored = true
     root.CFrame = cf
   end)
+  print("Zombie farm should be active!")
   while wait(1) do
     if (hrp.Position-Vector3.new(0,0,0)).Magnitude < 25 then
       hrp.CFrame = CFrame.new(0,5,0)

@@ -8,16 +8,11 @@ local mouse = plr:GetMouse()
 local chr = plr.Character or plr.CharacterAdded:Wait()
 local hrp = chr:WaitForChild("HumanoidRootPart")
 local hmd = chr:WaitForChild("Humanoid")
-local debounce = false
-hmd.Died:Connect(function()
-	debounce = true
-end)
 plr.CharacterAdded:Connect(function(char)
 	chr = char
 	hrp = char:WaitForChild("HumanoidRootPart")
 	hmd = char:WaitForChild("Humanoid")
 	cam = workspace.CurrentCamera
-	debounce = false
 end)
 
 -- CREATING PRESETS --
@@ -550,5 +545,27 @@ noclipRow.button.MouseButton1Down:Connect(function()
 		for i,v in pairs(standardCancollide) do
 			v.CanCollide = true
 		end
+	end
+end)
+
+local anchorActive = false
+local anchorRow = toggle:Clone()
+anchorRow.Visible = true
+anchorRow.Parent = main
+anchorRow.LayoutOrder = 9
+anchorRow.desc.Text = "Anchor body"
+anchorRow.button.MouseButton1Down:Connect(function()
+	anchorActive = not anchorActive
+	if anchorActive then
+		anchorRow.button.hider.Visible = false
+		hrp.Anchored = true
+	else
+		anchorRow.button.hider.Visible = true
+		hrp.Anchored = false
+	end
+end)
+hrp:GetPropertyChangedSignal("Anchored"):Connect(function()
+	if anchorActive then
+		hrp.Anchored = true
 	end
 end)

@@ -3,6 +3,7 @@
 local uis = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
 local plr = game.Players.LocalPlayer
+local backpack = plr.Backpack
 local mouse = plr:GetMouse()
 local chr = plr.Character or plr.CharacterAdded:Wait()
 local hrp = chr:WaitForChild("HumanoidRootPart")
@@ -309,6 +310,7 @@ ghostPart.Anchored = true
 ghostPart.CanQuery = false
 ghostPart.CanCollide = false
 ghostPart.CanTouch = false
+local tool = nil
 local ghostActive = false
 local ghostFunction1
 local ghostFunction2
@@ -316,6 +318,21 @@ local ghostHoldingW = false
 local ghostHoldingA = false
 local ghostHoldingS = false
 local ghostHoldingD = false
+for i,v in pairs(backpack:GetChildren()) do
+	if v:IsA("Tool") then
+		v.Equipped:Connect(function()
+			if v.PrimaryPart then
+				tool = v.PrimaryPart
+			else
+				for i,k in pairs(v:GetChildren()) do
+					if k:IsA("BasePart") then
+						tool = k
+					end
+				end
+			end
+		end)
+	end
+end
 local ghostRow = toggle:Clone()
 ghostRow.Visible = true
 ghostRow.Parent = main
@@ -336,6 +353,9 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame += ghostPart.CFrame.LookVector * 1
+						if tool then
+							tool.Position = ghostPart.Position
+						end
 					until not ghostHoldingW
 				elseif input.KeyCode == Enum.KeyCode.S then
 					ghostHoldingS = true
@@ -343,6 +363,9 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame += ghostPart.CFrame.LookVector * -1
+						if tool then
+							tool.Position = ghostPart.Position
+						end
 					until not ghostHoldingS
 				elseif input.KeyCode == Enum.KeyCode.A then
 					ghostHoldingA = true
@@ -350,6 +373,9 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame *= CFrame.new(-1,0,0)
+						if tool then
+							tool.Position = ghostPart.Position
+						end
 					until not ghostHoldingA
 				elseif input.KeyCode == Enum.KeyCode.D then
 					ghostHoldingD = true
@@ -357,6 +383,9 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame *= CFrame.new(1,0,0)
+						if tool then
+							tool.Position = ghostPart.Position
+						end
 					until not ghostHoldingD
 				end
 			end

@@ -1,0 +1,516 @@
+-- HOLD LEFT CTRL TO UNLOCK MOUSE --
+
+local uis = game:GetService("UserInputService")
+local cam = workspace.CurrentCamera
+local plr = game.Players.LocalPlayer
+local mouse = plr:GetMouse()
+local chr = plr.Character or plr.CharacterAdded:Wait()
+local hrp = chr:WaitForChild("HumanoidRootPart")
+local hmd = chr:WaitForChild("Humanoid")
+local debounce = false
+hmd.Died:Connect(function()
+	debounce = true
+end)
+plr.CharacterAdded:Connect(function(char)
+	chr = char
+	hrp = char:WaitForChild("HumanoidRootPart")
+	hmd = char:WaitForChild("Humanoid")
+	cam = workspace.CurrentCamera
+	debounce = false
+end)
+
+-- CREATING PRESETS --
+
+local presets = Instance.new("Folder")
+
+local toggle = Instance.new("Frame",presets)
+toggle.Name = "toggle"
+toggle.Visible = false
+toggle.BackgroundTransparency = 1
+toggle.Size = UDim2.new(1,0,0,15)
+
+local button = Instance.new("ImageButton",toggle)
+button.Name = "button"
+button.BackgroundTransparency = 1
+button.Size = UDim2.new(0,15,1,0)
+button.Position = UDim2.new(0.04,0,0,0)
+button.Image = "rbxassetid://14300228791"
+button.ScaleType = Enum.ScaleType.Fit
+button.AutoButtonColor = false
+
+local hider = Instance.new("Frame",button)
+hider.Name = "hider"
+hider.BackgroundColor3 = Color3.fromRGB(25,25,25)
+hider.Size = UDim2.new(0.45,0,0.45,0)
+hider.Position = UDim2.new(0.5,0,0.5,0)
+hider.AnchorPoint = Vector2.new(0.5,0.5)
+hider.BorderSizePixel = 0
+
+local desc = Instance.new("TextLabel",toggle)
+desc.Name = "desc"
+desc.BackgroundTransparency = 1
+desc.Size = UDim2.new(0.8,0,1,0)
+desc.Position = UDim2.new(0.15,0,0,0)
+desc.TextColor3 = Color3.fromRGB(200,200,200)
+desc.TextScaled = true
+desc.TextXAlignment = Enum.TextXAlignment.Right
+
+local input = Instance.new("Frame",presets)
+input.Name = "input"
+input.Visible = false
+input.BackgroundTransparency = 1
+input.Size = UDim2.new(1,0,0,15)
+
+local box = Instance.new("TextBox",input)
+box.Name = "box"
+box.BackgroundColor3 = Color3.fromRGB(35,35,35)
+box.Size = UDim2.new(0,35,1,0)
+box.Position = UDim2.new(0.02,0,0,0)
+box.TextColor3 = Color3.fromRGB(200,200,200)
+box.Text = ""
+box.TextScaled = true
+Instance.new("UICorner",box).CornerRadius = UDim.new(0.3,0)
+
+local desc = Instance.new("TextLabel",input)
+desc.Name = "desc"
+desc.BackgroundTransparency = 1
+desc.Size = UDim2.new(0.8,0,1,0)
+desc.Position = UDim2.new(0.15,0,0,0)
+desc.TextColor3 = Color3.fromRGB(200,200,200)
+desc.TextScaled = true
+desc.TextXAlignment = Enum.TextXAlignment.Right
+
+-- CREATING GUI --
+
+local gui = Instance.new("ScreenGui",plr.PlayerGui)
+gui.Name = "MovementHacks"
+gui.ResetOnSpawn = false
+gui.DisplayOrder = math.huge
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local modalButton = Instance.new("TextButton",gui)
+modalButton.Text = ""
+modalButton.Modal = true
+modalButton.BackgroundTransparency = 1
+modalButton.Size = UDim2.new(1,0,1,0)
+modalButton.ZIndex = 0
+modalButton.Visible = false
+
+local bg = Instance.new("Frame",gui)
+bg.BackgroundColor3 = Color3.fromRGB(25,25,25)
+bg.Size = UDim2.new(0.2,0,0.5,0)
+bg.Position = UDim2.new(0.73,0,0.967,0)
+bg.ClipsDescendants = true
+Instance.new("UICorner",bg).CornerRadius = UDim.new(0.03,0)
+Instance.new("UIStroke",bg)
+
+local top = Instance.new("Frame",bg)
+top.Size = UDim2.new(1.02,0,0.06,0)
+top.Position = UDim2.new(-0.01,0,0,0)
+top.BackgroundTransparency = 1
+Instance.new("UIStroke",top).Color = Color3.fromRGB(40,40,40)
+
+local closebtn = Instance.new("TextButton",top)
+closebtn.BackgroundTransparency = 1
+closebtn.Size = UDim2.new(0.1,0,1,0)
+closebtn.Position = UDim2.new(0.9,0,0,0)
+closebtn.Text = "X"
+closebtn.TextColor3 = Color3.fromRGB(200,200,200)
+closebtn.TextScaled = true
+
+local togglebtn = Instance.new("TextButton",top)
+togglebtn.BackgroundTransparency = 1
+togglebtn.Size = UDim2.new(0.1,0,1,0)
+togglebtn.Position = UDim2.new(0.82,0,0,0)
+togglebtn.Text = "↑↓"
+togglebtn.TextColor3 = Color3.fromRGB(200,200,200)
+togglebtn.TextScaled = true
+
+local text = Instance.new("TextLabel",top)
+text.BackgroundTransparency = 1
+text.Size = UDim2.new(0.65,0,0.7,0)
+text.Position = UDim2.new(0,0,0.15,0)
+text.Text = "Movement hacks"
+text.TextColor3 = Color3.fromRGB(200,200,200)
+text.TextScaled = true
+
+local main = Instance.new("ScrollingFrame",bg)
+main.BackgroundTransparency = 1
+main.Size = UDim2.new(1,0,0.8,0)
+main.Position = UDim2.new(0,0,0.1,0)
+main.ScrollBarThickness = 5
+main.ElasticBehavior = Enum.ElasticBehavior.Never
+main.AutomaticCanvasSize = Enum.AutomaticSize.Y
+local layout = Instance.new("UIListLayout",main)
+layout.Padding = UDim.new(0,5)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+local padding = Instance.new("UIPadding",main)
+padding.PaddingLeft = UDim.new(0.03,0)
+padding.PaddingRight = UDim.new(0.07,0)
+
+-- GUI FUNCTIONALITY --
+
+local ts = game:GetService("TweenService")
+local toggleInfo = TweenInfo.new(0.7,Enum.EasingStyle.Quad,Enum.EasingDirection.InOut,0,false)
+local toggleClose = ts:Create(bg,toggleInfo,{Position = UDim2.new(0.73,0,0.967,0)})
+local toggleOpen = ts:Create(bg,toggleInfo,{Position = UDim2.new(0.73,0,0.52,0)})
+
+local toggleDebounce = false
+closebtn.MouseButton1Down:Connect(function()
+	toggleDebounce = true
+	ts:Create(bg,TweenInfo.new(0.5,Enum.EasingStyle.Quart,Enum.EasingDirection.Out,0,false),{Position = UDim2.new(0.73,0,1.02,0)}):Play()
+	wait(0.5)
+	gui:Destroy()
+	script:Destroy()
+end)
+local minimized = true
+togglebtn.MouseButton1Down:Connect(function()
+	if not toggleDebounce then
+		toggleDebounce = true
+		minimized = not minimized
+		if minimized then
+			toggleClose:Play()
+		else
+			toggleOpen:Play()
+		end
+		wait(0.7)
+		toggleDebounce = false
+	end
+end)
+
+uis.InputBegan:Connect(function(input,gpe)
+	if not gpe and input.KeyCode == Enum.KeyCode.LeftControl then
+		modalButton.Visible = true
+	end
+end)
+uis.InputEnded:Connect(function(input,gpe)
+	if not gpe and input.KeyCode == Enum.KeyCode.LeftControl then
+		modalButton.Visible = false
+	end
+end)
+
+-- CREATING ROWS --
+
+local setSpeed = hmd.WalkSpeed
+local walkspeedRow = input:Clone()
+walkspeedRow.Visible = true
+walkspeedRow.Parent = main
+walkspeedRow.LayoutOrder = 1
+walkspeedRow.desc.Text = "Walkspeed"
+walkspeedRow.box.Text = setSpeed
+walkspeedRow.box.FocusLost:Connect(function()
+	local num = tonumber(walkspeedRow.box.Text)
+	if num then
+		setSpeed = num
+		hmd.WalkSpeed = num
+	end
+end)
+hmd:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+	wait()
+	if hmd.WalkSpeed ~= setSpeed then
+		hmd.WalkSpeed = setSpeed
+	end
+end)
+
+local setJumpheight = hmd.JumpHeight
+local jumpheightRow = input:Clone()
+jumpheightRow.Visible = true
+jumpheightRow.Parent = main
+jumpheightRow.LayoutOrder = 2
+jumpheightRow.desc.Text = "Jump height"
+jumpheightRow.box.Text = setJumpheight
+jumpheightRow.box.FocusLost:Connect(function()
+	local num = tonumber(jumpheightRow.box.Text)
+	if num then
+		setJumpheight = num
+		hmd.JumpHeight = num
+	end
+end)
+hmd:GetPropertyChangedSignal("JumpHeight"):Connect(function()
+	wait()
+	if hmd.JumpHeight ~= setJumpheight then
+		hmd.JumpHeight = setJumpheight
+	end
+end)
+
+local flyActive = false
+local flyFunction1
+local flyFunction2
+local flyHoldingW = false
+local flyHoldingA = false
+local flyHoldingS = false
+local flyHoldingD = false
+local flyRow = toggle:Clone()
+flyRow.Visible = true
+flyRow.Parent = main
+flyRow.LayoutOrder = 3
+flyRow.desc.Text = "Fly"
+flyRow.button.MouseButton1Down:Connect(function()
+	flyActive = not flyActive
+	if flyActive then
+		hrp.Anchored = true
+		flyRow.button.hider.Visible = false
+		flyFunction1 = uis.InputBegan:Connect(function(input,gpe)
+			if not gpe then
+				if input.KeyCode == Enum.KeyCode.W then
+					flyHoldingW = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame += hrp.CFrame.LookVector * 1
+					until not flyHoldingW
+				elseif input.KeyCode == Enum.KeyCode.S then
+					flyHoldingS = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame += hrp.CFrame.LookVector * -1
+					until not flyHoldingS
+				elseif input.KeyCode == Enum.KeyCode.A then
+					flyHoldingA = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame *= CFrame.new(-1,0,0)
+					until not flyHoldingA
+				elseif input.KeyCode == Enum.KeyCode.D then
+					flyHoldingD = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame *= CFrame.new(1,0,0)
+					until not flyHoldingD
+				end
+			end
+		end)
+		flyFunction2 = uis.InputEnded:Connect(function(input)
+			if input.KeyCode == Enum.KeyCode.W then
+				flyHoldingW = false
+			elseif input.KeyCode == Enum.KeyCode.A then
+				flyHoldingA = false
+			elseif input.KeyCode == Enum.KeyCode.S then
+				flyHoldingS = false
+			elseif input.KeyCode == Enum.KeyCode.D then
+				flyHoldingD = false
+			end
+		end)
+	else
+		hrp.Anchored = false
+		flyRow.button.hider.Visible = true
+		flyFunction1:Disconnect()
+		flyFunction2:Disconnect()
+	end
+end)
+
+local ghostPart = Instance.new("Part",workspace)
+ghostPart.Size = Vector3.new(2,2,2)
+ghostPart.Transparency = 0.8
+ghostPart.Anchored = true
+ghostPart.CanQuery = false
+ghostPart.CanCollide = false
+ghostPart.CanTouch = false
+local ghostActive = false
+local ghostFunction1
+local ghostFunction2
+local ghostHoldingW = false
+local ghostHoldingA = false
+local ghostHoldingS = false
+local ghostHoldingD = false
+local ghostRow = toggle:Clone()
+ghostRow.Visible = true
+ghostRow.Parent = main
+ghostRow.LayoutOrder = 4
+ghostRow.desc.Text = "Ghost"
+ghostRow.button.MouseButton1Down:Connect(function()
+	ghostActive = not ghostActive
+	if ghostActive then
+		cam.CameraSubject = ghostPart
+		ghostPart.CFrame = hrp.CFrame
+		hrp.Anchored = true
+		ghostRow.button.hider.Visible = false
+		ghostFunction1 = uis.InputBegan:Connect(function(input,gpe)
+			if not gpe then
+				if input.KeyCode == Enum.KeyCode.W then
+					ghostHoldingW = true
+					repeat
+						task.wait()
+						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
+						ghostPart.CFrame += ghostPart.CFrame.LookVector * 1
+					until not ghostHoldingW
+				elseif input.KeyCode == Enum.KeyCode.S then
+					ghostHoldingS = true
+					repeat
+						task.wait()
+						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
+						ghostPart.CFrame += ghostPart.CFrame.LookVector * -1
+					until not ghostHoldingS
+				elseif input.KeyCode == Enum.KeyCode.A then
+					ghostHoldingA = true
+					repeat
+						task.wait()
+						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
+						ghostPart.CFrame *= CFrame.new(-1,0,0)
+					until not ghostHoldingA
+				elseif input.KeyCode == Enum.KeyCode.D then
+					ghostHoldingD = true
+					repeat
+						task.wait()
+						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
+						ghostPart.CFrame *= CFrame.new(1,0,0)
+					until not ghostHoldingD
+				end
+			end
+		end)
+		ghostFunction2 = uis.InputEnded:Connect(function(input)
+			if input.KeyCode == Enum.KeyCode.W then
+				ghostHoldingW = false
+			elseif input.KeyCode == Enum.KeyCode.A then
+				ghostHoldingA = false
+			elseif input.KeyCode == Enum.KeyCode.S then
+				ghostHoldingS = false
+			elseif input.KeyCode == Enum.KeyCode.D then
+				ghostHoldingD = false
+			end
+		end)
+	else
+		cam.CameraSubject = hmd
+		hrp.Anchored = false
+		ghostRow.button.hider.Visible = true
+		ghostFunction1:Disconnect()
+		ghostFunction2:Disconnect()
+	end
+end)
+
+local infjumpActive = false
+local infjumpFunction
+local infjumpRow = toggle:Clone()
+infjumpRow.Visible = true
+infjumpRow.Parent = main
+infjumpRow.desc.Text = "Infinite jump"
+infjumpRow.LayoutOrder = 5
+infjumpRow.button.MouseButton1Down:Connect(function()
+	infjumpActive = not infjumpActive
+	if infjumpActive then
+		infjumpRow.button.hider.Visible = false
+		infjumpFunction = uis.JumpRequest:Connect(function()
+			hmd:ChangeState(Enum.HumanoidStateType.Jumping,true)
+		end)
+	else
+		infjumpRow.button.hider.Visible = true
+		infjumpFunction:Disconnect()
+	end
+end)
+
+local safeinfjumpActive = false
+local safeinfjumpFunction
+local safeinfjumpRow = toggle:Clone()
+safeinfjumpRow.Visible = true
+safeinfjumpRow.Parent = main
+safeinfjumpRow.desc.Text = "Safe infinite jump"
+safeinfjumpRow.LayoutOrder = 6
+safeinfjumpRow.button.MouseButton1Down:Connect(function()
+	safeinfjumpActive = not safeinfjumpActive
+	if safeinfjumpActive then
+		safeinfjumpRow.button.hider.Visible = false
+		safeinfjumpFunction = uis.JumpRequest:Connect(function()
+			hmd:ChangeState(Enum.HumanoidStateType.Landed,true)
+			task.wait()
+			hmd:ChangeState(Enum.HumanoidStateType.Jumping,true)
+		end)
+	else
+		safeinfjumpRow.button.hider.Visible = true
+		safeinfjumpFunction:Disconnect()
+	end
+end)
+
+local clicktpActive = false
+local clicktpFunction1
+local clicktpFunction2
+local clicktpFunction3
+local clicktpHolding = false
+for i,v in pairs(workspace:GetDescendants()) do
+	if (v:IsA("Part") or v:IsA("Union")) and v.CanCollide == false then
+		v.CanQuery = false
+	end
+end
+local clicktpRow = toggle:Clone()
+clicktpRow.Visible = true
+clicktpRow.Parent = main
+clicktpRow.LayoutOrder = 7
+clicktpRow.desc.Text = "Ctrl click tp"
+clicktpRow.button.MouseButton1Down:Connect(function()
+	clicktpActive = not clicktpActive
+	if clicktpActive then
+		clicktpRow.button.hider.Visible = false
+		clicktpFunction1 = uis.InputBegan:Connect(function(input)
+			if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+				clicktpHolding = true
+			end
+		end)
+		clicktpFunction2 = uis.InputEnded:Connect(function(input)
+			if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+				clicktpHolding = false
+			end
+		end)
+		clicktpFunction3 = mouse.Button1Down:Connect(function()
+			if clicktpHolding then
+				hrp.CFrame = mouse.Hit * CFrame.new(0,4,0)
+			end
+		end)
+	else
+		clicktpRow.button.hider.Visible = true
+		clicktpFunction1:Disconnect()
+		clicktpFunction2:Disconnect()
+		clicktpFunction3:Disconnect()
+	end
+end)
+
+local noclipActive = false
+for i,v in pairs(chr:GetChildren()) do
+	if v:IsA("MeshPart") then
+		v.CanQuery = false
+		v:GetPropertyChangedSignal("CanQuery"):Connect(function()
+			v.CanQuery = false
+		end)
+	end
+end
+local noclipRow = toggle:Clone()
+local standardCancollide = {}
+for i,v in pairs(chr:GetChildren()) do
+	if (v:IsA("MeshPart") or v:IsA("Part")) and v.CanCollide then
+		table.insert(standardCancollide,v)
+		v:GetPropertyChangedSignal("CanCollide"):Connect(function()
+			if noclipActive then
+				v.CanCollide = false
+			end
+		end)
+	end
+end
+noclipRow.Visible = true
+noclipRow.Parent = main
+noclipRow.LayoutOrder = 8
+noclipRow.desc.Text = "Noclip"
+noclipRow.button.MouseButton1Down:Connect(function()
+	noclipActive = not noclipActive
+	if noclipActive then
+		noclipRow.button.hider.Visible = false
+		for i,v in pairs(chr:GetChildren()) do
+			if v:IsA("MeshPart") or v:IsA("Part") then
+				v.CanCollide = false
+			end
+		end
+		repeat
+			wait()
+			for i,v in pairs(standardCancollide) do
+				if v.CanCollide then
+					v.CanCollide = false
+				end
+			end
+		until not noclipActive
+	else
+		noclipRow.button.hider.Visible = true
+		for i,v in pairs(standardCancollide) do
+			v.CanCollide = true
+		end
+	end
+end)

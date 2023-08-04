@@ -1,4 +1,4 @@
--- HOLD \ TO UNLOCK MOUSE --
+-- HOLD \ OR ; TO UNLOCK MOUSE --
 
 local uis = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
@@ -180,12 +180,12 @@ togglebtn.MouseButton1Down:Connect(function()
 end)
 
 uis.InputBegan:Connect(function(input,gpe)
-	if not gpe and input.KeyCode == Enum.KeyCode.BackSlash then
+	if not gpe and (input.KeyCode == Enum.KeyCode.BackSlash or input.KeyCode == Enum.KeyCode.Semicolon) then
 		modalButton.Visible = true
 	end
 end)
 uis.InputEnded:Connect(function(input,gpe)
-	if not gpe and input.KeyCode == Enum.KeyCode.BackSlash then
+	if not gpe and (input.KeyCode == Enum.KeyCode.BackSlash or input.KeyCode == Enum.KeyCode.Semicolon) then
 		modalButton.Visible = false
 	end
 end)
@@ -310,7 +310,7 @@ ghostPart.Anchored = true
 ghostPart.CanQuery = false
 ghostPart.CanCollide = false
 ghostPart.CanTouch = false
-local tool = nil
+local tool = {}
 local ghostActive = false
 local ghostFunction1
 local ghostFunction2
@@ -321,13 +321,10 @@ local ghostHoldingD = false
 for i,v in pairs(backpack:GetChildren()) do
 	if v:IsA("Tool") then
 		v.Equipped:Connect(function()
-			if v.PrimaryPart then
-				tool = v.PrimaryPart
-			else
-				for i,k in pairs(v:GetChildren()) do
-					if k:IsA("BasePart") then
-						tool = k
-					end
+			tool = {}
+			for i,k in pairs(v:GetDescendants()) do
+				if k:IsA("BasePart") then
+					table.insert(tool,k)
 				end
 			end
 		end)
@@ -353,8 +350,11 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame += ghostPart.CFrame.LookVector * 1
-						if tool then
-							tool.Position = ghostPart.Position
+						if #tool ~= 0 then
+							local gp = ghostPart.Position
+							for i,v in pairs(tool) do
+								v.Position = gp
+							end
 						end
 					until not ghostHoldingW
 				elseif input.KeyCode == Enum.KeyCode.S then
@@ -363,8 +363,11 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame += ghostPart.CFrame.LookVector * -1
-						if tool then
-							tool.Position = ghostPart.Position
+						if #tool ~= 0 then
+							local gp = ghostPart.Position
+							for i,v in pairs(tool) do
+								v.Position = gp
+							end
 						end
 					until not ghostHoldingS
 				elseif input.KeyCode == Enum.KeyCode.A then
@@ -373,8 +376,11 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame *= CFrame.new(-1,0,0)
-						if tool then
-							tool.Position = ghostPart.Position
+						if #tool ~= 0 then
+							local gp = ghostPart.Position
+							for i,v in pairs(tool) do
+								v.Position = gp
+							end
 						end
 					until not ghostHoldingA
 				elseif input.KeyCode == Enum.KeyCode.D then
@@ -383,8 +389,11 @@ ghostRow.button.MouseButton1Down:Connect(function()
 						task.wait()
 						ghostPart.CFrame = cam.CFrame + (ghostPart.Position - cam.CFrame.Position)
 						ghostPart.CFrame *= CFrame.new(1,0,0)
-						if tool then
-							tool.Position = ghostPart.Position
+						if #tool ~= 0 then
+							local gp = ghostPart.Position
+							for i,v in pairs(tool) do
+								v.Position = gp
+							end
 						end
 					until not ghostHoldingD
 				end

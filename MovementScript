@@ -1,4 +1,4 @@
--- HOLD LEFT CTRL TO UNLOCK MOUSE --
+-- HOLD \ TO UNLOCK MOUSE --
 
 local uis = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
@@ -179,12 +179,12 @@ togglebtn.MouseButton1Down:Connect(function()
 end)
 
 uis.InputBegan:Connect(function(input,gpe)
-	if not gpe and input.KeyCode == Enum.KeyCode.LeftControl then
+	if not gpe and input.KeyCode == Enum.KeyCode.BackSlash then
 		modalButton.Visible = true
 	end
 end)
 uis.InputEnded:Connect(function(input,gpe)
-	if not gpe and input.KeyCode == Enum.KeyCode.LeftControl then
+	if not gpe and input.KeyCode == Enum.KeyCode.BackSlash then
 		modalButton.Visible = false
 	end
 end)

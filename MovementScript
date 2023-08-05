@@ -1,8 +1,9 @@
 -- HOLD \ OR ; TO UNLOCK MOUSE --
 
+local players = game:GetService("Players")
 local uis = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
-local plr = game.Players.LocalPlayer
+local plr = players.LocalPlayer or players.PlayerAdded:Wait()
 local mouse = plr:GetMouse()
 local chr = plr.Character or plr.CharacterAdded:Wait()
 local hrp = chr:WaitForChild("HumanoidRootPart")
@@ -185,6 +186,25 @@ uis.InputEnded:Connect(function(input,gpe)
 end)
 
 -- CREATING ROWS --
+
+local teleportRow = input:Clone()
+teleportRow.Visible = true
+teleportRow.Parent = main
+teleportRow.LayoutOrder = 0
+teleportRow.desc.Text = "Teleport to"
+teleportRow.box.Size = UDim2.new(0,110,1,0)
+teleportRow.box.FocusLost:Connect(function()
+	local name = teleportRow.box.Text
+	for _,player in pairs(players:GetChildren()) do
+		if string.match(player.Name,name) then
+			local hmrp = player.Character:FindFirstChild("HumanoidRootPart")
+			if hmrp then
+				hrp.CFrame = hmrp.CFrame
+				teleportRow.box.Text = player.Name
+			end
+		end
+	end
+end)
 
 local setSpeed = hmd.WalkSpeed
 local walkspeedRow = input:Clone()
@@ -620,7 +640,7 @@ hrp:GetPropertyChangedSignal("Anchored"):Connect(function()
 	if anchorhider.Visible == false then
 		hrp.Anchored = true
 	end
-end)
+end) 
 
 hmd.Died:Connect(function()
 	for i,v in pairs(main:GetChildren()) do

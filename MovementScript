@@ -82,6 +82,7 @@ local gui = Instance.new("ScreenGui",plr.PlayerGui)
 gui.Name = "MovementHacks"
 gui.ResetOnSpawn = false
 gui.DisplayOrder = math.huge
+gui.ZIndex = math.huge
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 local modalButton = Instance.new("TextButton",gui)

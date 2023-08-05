@@ -81,7 +81,7 @@ desc.TextXAlignment = Enum.TextXAlignment.Right
 local gui = Instance.new("ScreenGui",plr.PlayerGui)
 gui.Name = "MovementHacks"
 gui.ResetOnSpawn = false
-gui.DisplayOrder = -999
+gui.DisplayOrder = 99999
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 local modalButton = Instance.new("TextButton",gui)
@@ -212,9 +212,10 @@ walkspeedRow.Visible = true
 walkspeedRow.Parent = main
 walkspeedRow.LayoutOrder = 1
 walkspeedRow.desc.Text = "Walkspeed"
-walkspeedRow.box.Text = setSpeed
+walkspeedRow.box.Text = math.round(setSpeed*10)/10
 walkspeedRow.box.FocusLost:Connect(function()
-	local num = tonumber(walkspeedRow.box.Text)
+	local num = math.round(tonumber(walkspeedRow.box.Text)*10)/10
+	walkspeedRow.box.Text = num
 	if num then
 		setSpeed = num
 		hmd.WalkSpeed = num
@@ -233,9 +234,10 @@ jumpheightRow.Visible = true
 jumpheightRow.Parent = main
 jumpheightRow.LayoutOrder = 2
 jumpheightRow.desc.Text = "Jump height"
-jumpheightRow.box.Text = setJumpheight
+jumpheightRow.box.Text = math.round(setJumpheight*10)/10
 jumpheightRow.box.FocusLost:Connect(function()
-	local num = tonumber(jumpheightRow.box.Text)
+	local num = math.round(tonumber(jumpheightRow.box.Text)*10)/10
+	jumpheightRow.box.Text = num
 	if num then
 		setJumpheight = num
 		hmd.JumpHeight = num
@@ -259,11 +261,9 @@ flyRow.Visible = true
 flyRow.Parent = main
 flyRow.LayoutOrder = 3
 flyRow.desc.Text = "Fly"
-local flyhider = flyRow.button.hider
-local fly2hider
-local ghosthider
+flyhider = flyRow.button.hider
 flyRow.button.MouseButton1Down:Connect(function()
-	if fly2hider.Visible and ghosthider.Visible then
+	if ghosthider.Visible then
 		flyhider.Visible = not flyhider.Visible
 		if flyhider.Visible == false then
 			hrp.Anchored = true
@@ -274,7 +274,7 @@ flyRow.button.MouseButton1Down:Connect(function()
 						repeat
 							task.wait()
 							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector * 1
+							hrp.CFrame += hrp.CFrame.LookVector * 1
 						until not flyHoldingW or flyhider.Visible
 						flyHoldingW = false
 					elseif input.KeyCode == Enum.KeyCode.S then
@@ -282,7 +282,7 @@ flyRow.button.MouseButton1Down:Connect(function()
 						repeat
 							task.wait()
 							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector * -1
+							hrp.CFrame += hrp.CFrame.LookVector * -1
 						until not flyHoldingS or flyhider.Visible
 						flyHoldingS = false
 					elseif input.KeyCode == Enum.KeyCode.A then
@@ -290,7 +290,7 @@ flyRow.button.MouseButton1Down:Connect(function()
 						repeat
 							task.wait()
 							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame = hrp.CFrame * CFrame.new(-1,0,0)
+							hrp.CFrame *= CFrame.new(-1,0,0)
 						until not flyHoldingA or flyhider.Visible
 						flyHoldingA = false
 					elseif input.KeyCode == Enum.KeyCode.D then
@@ -298,7 +298,7 @@ flyRow.button.MouseButton1Down:Connect(function()
 						repeat
 							task.wait()
 							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame = hrp.CFrame * CFrame.new(1,0,0)
+							hrp.CFrame *= CFrame.new(1,0,0)
 						until not flyHoldingD or flyhider.Visible
 						flyHoldingD = false
 					end
@@ -323,81 +323,8 @@ flyRow.button.MouseButton1Down:Connect(function()
 	end
 end)
 
-local fly2Function1
-local fly2Function2
-local fly2HoldingW = false
-local fly2HoldingA = false
-local fly2HoldingS = false
-local fly2HoldingD = false
-local fly2Row = toggle:Clone()
-fly2Row.Visible = true
-fly2Row.Parent = main
-fly2Row.LayoutOrder = 4
-fly2Row.desc.Text = "Invisible fly"
-fly2hider = fly2Row.button.hider
-fly2Row.button.MouseButton1Down:Connect(function()
-	if flyhider.Visible and ghosthider.Visible then
-		fly2hider.Visible = not fly2hider.Visible
-		if fly2hider.Visible == false then
-			hrp.Anchored = true
-			fly2Function1 = uis.InputBegan:Connect(function(input,gpe)
-				if not gpe then
-					if input.KeyCode == Enum.KeyCode.W then
-						fly2HoldingW = true
-						repeat
-							task.wait()
-							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame += hrp.CFrame.LookVector * 1
-						until not fly2HoldingW or fly2hider.Visible
-						fly2HoldingW = false
-					elseif input.KeyCode == Enum.KeyCode.S then
-						fly2HoldingS = true
-						repeat
-							task.wait()
-							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame += hrp.CFrame.LookVector * -1
-						until not fly2HoldingS or fly2hider.Visible
-						fly2HoldingS = false
-					elseif input.KeyCode == Enum.KeyCode.A then
-						fly2HoldingA = true
-						repeat
-							task.wait()
-							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame *= CFrame.new(-1,0,0)
-						until not fly2HoldingA or fly2hider.Visible
-						fly2HoldingA = false
-					elseif input.KeyCode == Enum.KeyCode.D then
-						fly2HoldingD = true
-						repeat
-							task.wait()
-							hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-							hrp.CFrame *= CFrame.new(1,0,0)
-						until not fly2HoldingD or fly2hider.Visible
-						fly2HoldingD = false
-					end
-				end
-			end)
-			fly2Function2 = uis.InputEnded:Connect(function(input)
-				if input.KeyCode == Enum.KeyCode.W then
-					fly2HoldingW = false
-				elseif input.KeyCode == Enum.KeyCode.A then
-					fly2HoldingA = false
-				elseif input.KeyCode == Enum.KeyCode.S then
-					fly2HoldingS = false
-				elseif input.KeyCode == Enum.KeyCode.D then
-					fly2HoldingD = false
-				end
-			end)
-		else
-			hrp.Anchored = false
-			fly2Function1:Disconnect()
-			fly2Function2:Disconnect()
-		end
-	end
-end)
-
 local ghostPart = Instance.new("Part",workspace)
-ghostPart.Size = Vector3.new(2,2,2)
+ghostPart.Size = Vector3.new(1,1,1)
 ghostPart.Transparency = 0.8
 ghostPart.Anchored = true
 ghostPart.CanQuery = false
@@ -412,11 +339,11 @@ local ghostHoldingD = false
 local ghostRow = toggle:Clone()
 ghostRow.Visible = true
 ghostRow.Parent = main
-ghostRow.LayoutOrder = 5
+ghostRow.LayoutOrder = 4
 ghostRow.desc.Text = "Ghost"
 ghosthider = ghostRow.button.hider
 ghostRow.button.MouseButton1Down:Connect(function()
-	if flyhider.Visible and fly2hider.Visible then
+	if flyhider.Visible then
 		ghosthider.Visible = not ghosthider.Visible
 		if ghosthider.Visible == false then
 			cam.CameraSubject = ghostPart
@@ -484,7 +411,7 @@ local infjumpRow = toggle:Clone()
 infjumpRow.Visible = true
 infjumpRow.Parent = main
 infjumpRow.desc.Text = "Infinite jump"
-infjumpRow.LayoutOrder = 6
+infjumpRow.LayoutOrder = 5
 local infjumphider = infjumpRow.button.hider
 local safeinfjumphider
 infjumpRow.button.MouseButton1Down:Connect(function()
@@ -505,7 +432,7 @@ local safeinfjumpRow = toggle:Clone()
 safeinfjumpRow.Visible = true
 safeinfjumpRow.Parent = main
 safeinfjumpRow.desc.Text = "Safe infinite jump"
-safeinfjumpRow.LayoutOrder = 7
+safeinfjumpRow.LayoutOrder = 6
 safeinfjumphider = safeinfjumpRow.button.hider
 safeinfjumpRow.button.MouseButton1Down:Connect(function()
 	if infjumphider.Visible then
@@ -546,7 +473,7 @@ end)
 local clicktpRow = toggle:Clone()
 clicktpRow.Visible = true
 clicktpRow.Parent = main
-clicktpRow.LayoutOrder = 8
+clicktpRow.LayoutOrder = 7
 clicktpRow.desc.Text = "Ctrl click tp"
 local clicktphider = clicktpRow.button.hider
 clicktpRow.button.MouseButton1Down:Connect(function()
@@ -597,7 +524,7 @@ for i,v in pairs(chr:GetChildren()) do
 end
 noclipRow.Visible = true
 noclipRow.Parent = main
-noclipRow.LayoutOrder = 9
+noclipRow.LayoutOrder = 8
 noclipRow.desc.Text = "Noclip"
 noclipRow.button.MouseButton1Down:Connect(function()
 	nocliphider.Visible = not nocliphider.Visible
@@ -625,14 +552,14 @@ end)
 local anchorRow = toggle:Clone()
 anchorRow.Visible = true
 anchorRow.Parent = main
-anchorRow.LayoutOrder = 10
+anchorRow.LayoutOrder = 9
 anchorRow.desc.Text = "Anchor body"
 local anchorhider = anchorRow.button.hider
 anchorRow.button.MouseButton1Down:Connect(function()
 	anchorhider.Visible = not anchorhider.Visible
 	if anchorhider.Visible == false then
 		hrp.Anchored = true
-	elseif flyhider.Visible and fly2hider.Visible and ghosthider.Visible then
+	elseif flyhider.Visible and ghosthider.Visible then
 		hrp.Anchored = false
 	end
 end)

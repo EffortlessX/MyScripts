@@ -253,28 +253,28 @@ flyRow.button.MouseButton1Down:Connect(function()
 					repeat
 						task.wait()
 						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-						hrp.CFrame += hrp.CFrame.LookVector * 1
+						hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector * 1
 					until not flyHoldingW
 				elseif input.KeyCode == Enum.KeyCode.S then
 					flyHoldingS = true
 					repeat
 						task.wait()
 						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-						hrp.CFrame += hrp.CFrame.LookVector * -1
+						hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector * -1
 					until not flyHoldingS
 				elseif input.KeyCode == Enum.KeyCode.A then
 					flyHoldingA = true
 					repeat
 						task.wait()
 						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-						hrp.CFrame *= CFrame.new(-1,0,0)
+						hrp.CFrame = hrp.CFrame * CFrame.new(-1,0,0)
 					until not flyHoldingA
 				elseif input.KeyCode == Enum.KeyCode.D then
 					flyHoldingD = true
 					repeat
 						task.wait()
 						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
-						hrp.CFrame *= CFrame.new(1,0,0)
+						hrp.CFrame = hrp.CFrame * CFrame.new(1,0,0)
 					until not flyHoldingD
 				end
 			end
@@ -295,6 +295,75 @@ flyRow.button.MouseButton1Down:Connect(function()
 		flyRow.button.hider.Visible = true
 		flyFunction1:Disconnect()
 		flyFunction2:Disconnect()
+	end
+end)
+
+local fly2Active = false
+local fly2Function1
+local fly2Function2
+local fly2HoldingW = false
+local fly2HoldingA = false
+local fly2HoldingS = false
+local fly2HoldingD = false
+local fly2Row = toggle:Clone()
+fly2Row.Visible = true
+fly2Row.Parent = main
+fly2Row.LayoutOrder = 4
+fly2Row.desc.Text = "Invisible fly"
+fly2Row.button.MouseButton1Down:Connect(function()
+	fly2Active = not fly2Active
+	if fly2Active then
+		hrp.Anchored = true
+		fly2Row.button.hider.Visible = false
+		fly2Function1 = uis.InputBegan:Connect(function(input,gpe)
+			if not gpe then
+				if input.KeyCode == Enum.KeyCode.W then
+					fly2HoldingW = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame += hrp.CFrame.LookVector * 1
+					until not fly2HoldingW
+				elseif input.KeyCode == Enum.KeyCode.S then
+					fly2HoldingS = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame += hrp.CFrame.LookVector * -1
+					until not fly2HoldingS
+				elseif input.KeyCode == Enum.KeyCode.A then
+					fly2HoldingA = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame *= CFrame.new(-1,0,0)
+					until not fly2HoldingA
+				elseif input.KeyCode == Enum.KeyCode.D then
+					fly2HoldingD = true
+					repeat
+						task.wait()
+						hrp.CFrame = cam.CFrame + (hrp.Position - cam.CFrame.Position)
+						hrp.CFrame *= CFrame.new(1,0,0)
+					until not fly2HoldingD
+				end
+			end
+		end)
+		fly2Function2 = uis.InputEnded:Connect(function(input)
+			if input.KeyCode == Enum.KeyCode.W then
+				fly2HoldingW = false
+			elseif input.KeyCode == Enum.KeyCode.A then
+				fly2HoldingA = false
+			elseif input.KeyCode == Enum.KeyCode.S then
+				fly2HoldingS = false
+			elseif input.KeyCode == Enum.KeyCode.D then
+				fly2HoldingD = false
+			end
+		end)
+	else
+		hrp.Anchored = false
+		fly2Row.button.hider.Visible = true
+		fly2Function1:Disconnect()
+		fly2Function2:Disconnect()
 	end
 end)
 
@@ -328,7 +397,7 @@ end
 local ghostRow = toggle:Clone()
 ghostRow.Visible = true
 ghostRow.Parent = main
-ghostRow.LayoutOrder = 4
+ghostRow.LayoutOrder = 5
 ghostRow.desc.Text = "Ghost"
 ghostRow.button.MouseButton1Down:Connect(function()
 	ghostActive = not ghostActive
@@ -420,7 +489,7 @@ local infjumpRow = toggle:Clone()
 infjumpRow.Visible = true
 infjumpRow.Parent = main
 infjumpRow.desc.Text = "Infinite jump"
-infjumpRow.LayoutOrder = 5
+infjumpRow.LayoutOrder = 6
 infjumpRow.button.MouseButton1Down:Connect(function()
 	infjumpActive = not infjumpActive
 	if infjumpActive then
@@ -440,7 +509,7 @@ local safeinfjumpRow = toggle:Clone()
 safeinfjumpRow.Visible = true
 safeinfjumpRow.Parent = main
 safeinfjumpRow.desc.Text = "Safe infinite jump"
-safeinfjumpRow.LayoutOrder = 6
+safeinfjumpRow.LayoutOrder = 7
 safeinfjumpRow.button.MouseButton1Down:Connect(function()
 	safeinfjumpActive = not safeinfjumpActive
 	if safeinfjumpActive then
@@ -469,7 +538,7 @@ end
 local clicktpRow = toggle:Clone()
 clicktpRow.Visible = true
 clicktpRow.Parent = main
-clicktpRow.LayoutOrder = 7
+clicktpRow.LayoutOrder = 8
 clicktpRow.desc.Text = "Ctrl click tp"
 clicktpRow.button.MouseButton1Down:Connect(function()
 	clicktpActive = not clicktpActive
@@ -521,7 +590,7 @@ for i,v in pairs(chr:GetChildren()) do
 end
 noclipRow.Visible = true
 noclipRow.Parent = main
-noclipRow.LayoutOrder = 8
+noclipRow.LayoutOrder = 9
 noclipRow.desc.Text = "Noclip"
 noclipRow.button.MouseButton1Down:Connect(function()
 	noclipActive = not noclipActive
@@ -552,7 +621,7 @@ local anchorActive = false
 local anchorRow = toggle:Clone()
 anchorRow.Visible = true
 anchorRow.Parent = main
-anchorRow.LayoutOrder = 9
+anchorRow.LayoutOrder = 10
 anchorRow.desc.Text = "Anchor body"
 anchorRow.button.MouseButton1Down:Connect(function()
 	anchorActive = not anchorActive

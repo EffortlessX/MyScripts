@@ -630,7 +630,6 @@ followRow.button.MouseButton1Down:Connect(function()
 					hmrp = fullname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
 				end
 			until not followhider.Visible
-		end
 		elseif partname then
 		local hmrp = partname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
 			repeat

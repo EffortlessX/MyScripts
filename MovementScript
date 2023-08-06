@@ -193,17 +193,32 @@ teleportRow.Parent = main
 teleportRow.LayoutOrder = 0
 teleportRow.desc.Text = "Teleport to"
 teleportRow.box.Size = UDim2.new(0,110,1,0)
-teleportRow.box.FocusLost:Connect(function()
-	local name = teleportRow.box.Text
-	if name ~= "" then
+teleportRow.box.FocusLost:Connect(function(i,enter)
+	local name = string.lower(teleportRow.box.Text)
+	if name ~= "" and enter then
+		local fullname = nil
+		local partname = nil
 		for _,player in pairs(players:GetChildren()) do
-			if string.match(player.Name,name) then
-				print(plr.Name)
-				local hmrp = player.Character:FindFirstChild("HumanoidRootPart") or nil
-				if hmrp then
-					hrp.CFrame = hmrp.CFrame
-					teleportRow.box.Text = player.Name
+			local plrname = string.lower(player.Name)
+			if string.match(plrname,name) then
+				if plrname == name then
+					fullname = player
+				else
+					partname = player
 				end
+			end
+		end
+		if fullname then
+			local hmrp = fullname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
+			if hmrp then
+				hrp.CFrame = hmrp.CFrame
+				return
+			end
+		end
+		if partname then
+			local hmrp = fullname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
+			if hmrp then
+				hrp.CFrame = hmrp.CFrame
 			end
 		end
 	end
@@ -571,6 +586,65 @@ hrp:GetPropertyChangedSignal("Anchored"):Connect(function()
 		hrp.Anchored = true
 	end
 end) 
+
+local fullname = nil
+local partname = nil
+local targetRow = teleportRow:Clone()
+targetRow.LayoutOrder = 10
+targetRow.desc.Text = "Player to follow"
+targetRow.box.FocusLost:Connect(function(i,enter)
+	local name = string.lower(targetRow.box.Text)
+	if name ~= "" and enter then
+		fullname = nil
+		partname = nil
+		for _,player in pairs(players:GetChildren()) do
+			local plrname = string.lower(player.Name)
+			if string.match(plrname,name) then
+				if plrname == name then
+					fullname = player
+				else
+					partname = player
+				end
+			end
+		end
+	end
+end)
+
+local followRow = toggle:Clone()
+followRow.Visible = true
+followRow.Parent = main
+followRow.LayoutOrder = 11
+followRow.desc.Text = "Follow player"
+local followhider = followRow.button.hider
+followRow.button.MouseButton1Down:Connect(function()
+	followhider.Visible = not followhider.Visible
+	if followhider.Visible then
+		if fullname then
+			local hmrp = fullname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
+			repeat
+				task.wait()
+				if hmrp then
+					hrp.CFrame = hmrp.CFrame
+				else
+					wait()
+					hmrp = fullname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
+				end
+			until not followhider.Visible
+		end
+		elseif partname then
+		local hmrp = partname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
+			repeat
+				task.wait()
+				if hmrp then
+					hrp.CFrame = hmrp.CFrame
+				else
+					wait()
+				hmrp = partname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
+				end
+			until not followhider.Visible
+		end
+	end
+end)
 
 hmd.Died:Connect(function()
 	for i,v in pairs(main:GetChildren()) do

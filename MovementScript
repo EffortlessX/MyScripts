@@ -195,12 +195,15 @@ teleportRow.desc.Text = "Teleport to"
 teleportRow.box.Size = UDim2.new(0,110,1,0)
 teleportRow.box.FocusLost:Connect(function()
 	local name = teleportRow.box.Text
-	for _,player in pairs(players:GetChildren()) do
-		if string.match(player.Name,name) then
-			local hmrp = player.Character:FindFirstChild("HumanoidRootPart")
-			if hmrp then
-				hrp.CFrame = hmrp.CFrame
-				teleportRow.box.Text = player.Name
+	if name ~= "" then
+		for _,player in pairs(players:GetChildren()) do
+			if string.match(player.Name,name) then
+				print(plr.Name)
+				local hmrp = player.Character:FindFirstChild("HumanoidRootPart") or nil
+				if hmrp then
+					hrp.CFrame = hmrp.CFrame
+					teleportRow.box.Text = player.Name
+				end
 			end
 		end
 	end

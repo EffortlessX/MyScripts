@@ -639,7 +639,7 @@ followRow.button.MouseButton1Down:Connect(function()
 					hrp.CFrame = hmrp.CFrame
 				else
 					wait()
-				hmrp = partname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
+					hmrp = partname:FindFirstChild("Character"):FindFirstChild("HumanoidRootPart") or nil
 				end
 			until not followhider.Visible
 		end

@@ -8,7 +8,9 @@ local mouse = plr:GetMouse()
 local chr = plr.Character or plr.CharacterAdded:Wait()
 local hrp = chr:WaitForChild("HumanoidRootPart")
 local hmd = chr:WaitForChild("Humanoid")
+local resetVisibility
 plr.CharacterAdded:Connect(function(char)
+	resetVisibility()
 	chr = char
 	hrp = char:WaitForChild("HumanoidRootPart")
 	hmd = char:WaitForChild("Humanoid")
@@ -178,7 +180,7 @@ local oldIcon
 uis.InputBegan:Connect(function(input,gpe)
 	if not gpe and (input.KeyCode == Enum.KeyCode.BackSlash or input.KeyCode == Enum.KeyCode.Semicolon) then
 		oldIcon = mouse.Icon
-		mouse.Icon = ""
+		mouse:Destroy()
 		modalButton.Visible = true
 	end
 end)
@@ -196,11 +198,16 @@ local keyW = Enum.KeyCode.W
 local keyA = Enum.KeyCode.A
 local keyS = Enum.KeyCode.S
 local keyD = Enum.KeyCode.D
+local WASD = {keyW,keyA,keyS,keyD}
 uis.InputBegan:Connect(function(key)
-	table.insert(holding,key.KeyCode)
+	if table.find(WASD,key.KeyCode) then
+		table.insert(holding,key.KeyCode)
+	end
 end)
 uis.InputEnded:Connect(function(key)
-	table.remove(holding,table.find(holding,key.KeyCode))
+	if table.find(WASD,key.KeyCode) then
+		table.remove(holding,table.find(holding,key.KeyCode))
+	end
 end)
 
 local teleportRow = input:Clone()
@@ -300,14 +307,22 @@ end)
 local flyRow = toggle:Clone()
 flyRow.Visible = true
 flyRow.Parent = main
-flyRow.LayoutOrder = 5
+flyRow.LayoutOrder = 4
 flyRow.desc.Text = "Fly - invisible"
-flyhider = flyRow.button.hider
+local flyhider = flyRow.button.hider
+local ghosthider
+local anchorhider
+local flyVis = true
+local ghostVis = true
+flyhider:GetPropertyChangedSignal("Visible"):Connect(function()
+	flyVis = flyhider.Visible
+end)
 flyRow.button.MouseButton1Down:Connect(function()
 	flyhider.Visible = not flyhider.Visible
-	if flyhider.Visible then
+	wait()
+	if flyVis and anchorhider.Visible then
 		hrp.Anchored = false
-	else
+	elseif ghostVis then
 		hrp.Anchored = true
 		repeat
 			task.wait()
@@ -319,7 +334,9 @@ flyRow.button.MouseButton1Down:Connect(function()
 					hrp.CFrame *= CFrame.new((v == keyD and flyspeed or -flyspeed),0,0)
 				end
 			end
-		until flyhider.Visible
+		until flyVis
+	else
+		flyhider.Visible = true
 	end
 end) 
 
@@ -334,16 +351,22 @@ local oldCamsubject = nil
 local ghostRow = toggle:Clone()
 ghostRow.Visible = true
 ghostRow.Parent = main
-ghostRow.LayoutOrder = 6
+ghostRow.LayoutOrder = 5
 ghostRow.desc.Text = "Ghost"
 ghosthider = ghostRow.button.hider
+ghosthider:GetPropertyChangedSignal("Visible"):Connect(function()
+	ghostVis = ghosthider.Visible
+end)
 ghostRow.button.MouseButton1Down:Connect(function()
 	ghosthider.Visible = not ghosthider.Visible
-	if ghosthider.Visible then
-		hrp.Anchored = false
+	wait()
+	if ghostVis then
+		if anchorhider.Visible then
+			hrp.Anchored = false
+		end
 		cam.CameraSubject = oldCamsubject
 		ghostPart.Transparency = 1
-	else
+	elseif flyVis then
 		hrp.Anchored = true
 		ghostPart.Transparency = 0.8
 		oldCamsubject = cam.CameraSubject
@@ -359,7 +382,9 @@ ghostRow.button.MouseButton1Down:Connect(function()
 					ghostPart.CFrame *= CFrame.new((v == keyD and flyspeed or -flyspeed),0,0)
 				end
 			end
-		until ghosthider.Visible
+		until ghostVis
+	else
+		ghosthider.Visible = true
 	end
 end) 
 
@@ -368,7 +393,7 @@ local infjumpRow = toggle:Clone()
 infjumpRow.Visible = true
 infjumpRow.Parent = main
 infjumpRow.desc.Text = "Infinite jump"
-infjumpRow.LayoutOrder = 7
+infjumpRow.LayoutOrder = 6
 local infjumphider = infjumpRow.button.hider
 local safeinfjumphider
 infjumpRow.button.MouseButton1Down:Connect(function()
@@ -389,7 +414,7 @@ local safeinfjumpRow = toggle:Clone()
 safeinfjumpRow.Visible = true
 safeinfjumpRow.Parent = main
 safeinfjumpRow.desc.Text = "Safe infinite jump"
-safeinfjumpRow.LayoutOrder = 8
+safeinfjumpRow.LayoutOrder = 7
 safeinfjumphider = safeinfjumpRow.button.hider
 safeinfjumpRow.button.MouseButton1Down:Connect(function()
 	if infjumphider.Visible then
@@ -430,7 +455,7 @@ end)
 local clicktpRow = toggle:Clone()
 clicktpRow.Visible = true
 clicktpRow.Parent = main
-clicktpRow.LayoutOrder = 9
+clicktpRow.LayoutOrder = 8
 clicktpRow.desc.Text = "Ctrl click tp"
 local clicktphider = clicktpRow.button.hider
 clicktpRow.button.MouseButton1Down:Connect(function()
@@ -466,9 +491,9 @@ for i,v in pairs(chr:GetChildren()) do
 		end)
 	end
 end
+local standardCancollide = {}
 local noclipRow = toggle:Clone()
 local nocliphider = noclipRow.button.hider
-local standardCancollide = {}
 for i,v in pairs(chr:GetChildren()) do
 	if (v:IsA("MeshPart") or v:IsA("Part")) and v.CanCollide then
 		table.insert(standardCancollide,v)
@@ -481,7 +506,7 @@ for i,v in pairs(chr:GetChildren()) do
 end
 noclipRow.Visible = true
 noclipRow.Parent = main
-noclipRow.LayoutOrder = 10
+noclipRow.LayoutOrder = 9
 noclipRow.desc.Text = "Noclip"
 noclipRow.button.MouseButton1Down:Connect(function()
 	nocliphider.Visible = not nocliphider.Visible
@@ -509,9 +534,9 @@ end)
 local anchorRow = toggle:Clone()
 anchorRow.Visible = true
 anchorRow.Parent = main
-anchorRow.LayoutOrder = 11
+anchorRow.LayoutOrder = 10
 anchorRow.desc.Text = "Anchor body"
-local anchorhider = anchorRow.button.hider
+anchorhider = anchorRow.button.hider
 anchorRow.button.MouseButton1Down:Connect(function()
 	anchorhider.Visible = not anchorhider.Visible
 	if anchorhider.Visible == false then
@@ -530,7 +555,7 @@ local targetPlayer = nil
 local followhider
 local targetRow = teleportRow:Clone()
 targetRow.Parent = main
-targetRow.LayoutOrder = 12
+targetRow.LayoutOrder = 11
 targetRow.desc.Text = "Target player"
 targetRow.box.FocusLost:Connect(function()
 	local name = string.lower(string.gsub(targetRow.box.Text," ",""))
@@ -561,7 +586,7 @@ end)
 local followRow = toggle:Clone()
 followRow.Visible = true
 followRow.Parent = main
-followRow.LayoutOrder = 13
+followRow.LayoutOrder = 12
 followRow.desc.Text = "Follow target"
 followhider = followRow.button.hider
 followRow.button.MouseButton1Down:Connect(function()
@@ -578,10 +603,10 @@ followRow.button.MouseButton1Down:Connect(function()
 	end
 end)
 
-hmd.Died:Connect(function()
+resetVisibility = function()
 	for i,v in pairs(main:GetChildren()) do
 		if v.Name == "toggle" and v.button.hider.Visible == false then
 			v.button.hider.Visible = true
 		end
 	end
-end)
+end

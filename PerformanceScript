@@ -1,0 +1,37 @@
+local players = game:GetService("Players")
+local plr = players.LocalPlayer or players.PlayerAdded:Wait()
+local chr = plr.Character or plr.CharacterAdded:Wait()
+local hrp = chr:WaitForChild("HumanoidRootPart")
+plr.CharacterAdded:Connect(function(char)
+	chr = char
+	hrp = char:WaitForChild("HumanoidRootPart")
+end)
+
+local parts = {}
+for i,v in pairs(workspace:GetDescendants()) do
+	if v:IsA("BasePart") and v.Transparency < 1 and v.Size.X < 250 and v.Size.Y < 250 and v.Size.Z < 250 then
+		table.insert(parts,v)
+		v.Destroying:Connect(function()
+			table.remove(parts,table.find(parts,v))
+		end)
+	end
+end
+for i,v in pairs(game:GetService("Lighting"):GetChildren()) do
+	v:Destroy()
+end
+
+local oldPos = hrp.Position
+while wait(2) do
+	local pos = hrp.Position
+	if (pos-oldPos).Magnitude > 50 then
+		oldPos = pos
+		for i,v in pairs(parts) do
+			task.wait()
+			if (v.Position-pos).Magnitude>300 then
+				v.Transparency = 1
+			else
+				v.Transparency = 0
+			end
+		end
+	end
+end	

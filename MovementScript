@@ -25,6 +25,8 @@ else
 		hmd.JumpHeight = setJumpheight
 	end
 end
+local params = RaycastParams.new()
+params.FilterDescendantsInstances = {chr}
 plr.CharacterAdded:Connect(function(char)
 	resetVisibility()
 	chr = char
@@ -39,7 +41,19 @@ plr.CharacterAdded:Connect(function(char)
 	hmd:GetPropertyChangedSignal("JumpHeight"):Connect(function()
 		setJumpheight(hmd)
 	end)
+	plr.CharacterAppearanceLoaded:Wait()
+	params.FilterDescendantsInstances = {char}
 end)
+local function checkFloor()
+	local cast = workspace:Raycast(hrp.CFrame.Position,Vector3.new(0,-4,0).Unit,params)
+	if cast then
+		hrp.CFrame = CFrame.new(Vector3.new(0,5,0)+cast.Position)
+	end
+end
+local function stopMovement()
+	hrp.Velocity = Vector3.new(0,0,0)
+	task.wait()
+end
 
 -- CREATING PRESETS --
 
@@ -270,7 +284,6 @@ teleportRow.box.FocusLost:Connect(function()
 	end
 end)
 
-
 local walkspeedRow = input:Clone()
 walkspeedRow.Visible = true
 walkspeedRow.Parent = main
@@ -338,6 +351,8 @@ flyRow.button.MouseButton1Down:Connect(function()
 	flyhider.Visible = not flyhider.Visible
 	wait()
 	if flyVis and anchorhider.Visible then
+		checkFloor()
+		stopMovement()
 		hrp.Anchored = false
 	elseif ghostVis then
 		hrp.Anchored = true
@@ -495,7 +510,8 @@ clicktpRow.button.MouseButton1Down:Connect(function()
 		end)
 		clicktpFunction3 = mouse.Button1Down:Connect(function()
 			if clicktpHolding then
-				hrp.CFrame = mouse.Hit * CFrame.new(0,4,0)
+				hrp.CFrame = CFrame.new(mouse.Hit.Position+Vector3.new(0,4,0))
+				stopMovement()
 			end
 		end)
 	else
@@ -569,7 +585,9 @@ anchorRow.button.MouseButton1Down:Connect(function()
 end)
 hrp:GetPropertyChangedSignal("Anchored"):Connect(function()
 	if anchorhider.Visible == false then
-		hrp.Anchored = true
+		checkFloor()
+		stopMovement()
+		hrp.Anchored = false
 	end
 end)
 
@@ -624,6 +642,7 @@ followRow.button.MouseButton1Down:Connect(function()
 			hmrp.Destroying:Connect(function()
 				followhider.Visible = true
 			end)
+			stopMovement()
 			repeat
 				task.wait()
 				hrp.CFrame = hmrp.CFrame

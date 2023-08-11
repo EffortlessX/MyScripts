@@ -9,12 +9,36 @@ local chr = plr.Character or plr.CharacterAdded:Wait()
 local hrp = chr:WaitForChild("HumanoidRootPart")
 local hmd = chr:WaitForChild("Humanoid")
 local resetVisibility
+local setSpeed = hmd.WalkSpeed
+function setwalkspeed(hmd)
+	hmd.WalkSpeed = setSpeed
+end
+local setJumpheight
+if hmd.UseJumpPower then
+	setJumpheight = hmd.JumpPower
+	function setjumpheight(hmd)
+		hmd.JumpPower = setJumpheight
+	end
+else
+	setJumpheight = hmd.JumpHeight
+	function setjumpheight(hmd)
+		hmd.JumpHeight = setJumpheight
+	end
+end
 plr.CharacterAdded:Connect(function(char)
 	resetVisibility()
 	chr = char
 	hrp = char:WaitForChild("HumanoidRootPart")
 	hmd = char:WaitForChild("Humanoid")
 	cam = workspace.CurrentCamera
+	setwalkspeed(hmd)
+	hmd:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+		setwalkspeed(hmd)
+	end)
+	setjumpheight(hmd)
+	hmd:GetPropertyChangedSignal("JumpHeight"):Connect(function()
+		setJumpheight(hmd)
+	end)
 end)
 
 -- CREATING PRESETS --
@@ -246,7 +270,7 @@ teleportRow.box.FocusLost:Connect(function()
 	end
 end)
 
-local setSpeed = hmd.WalkSpeed
+
 local walkspeedRow = input:Clone()
 walkspeedRow.Visible = true
 walkspeedRow.Parent = main
@@ -258,17 +282,13 @@ walkspeedRow.box.FocusLost:Connect(function()
 	walkspeedRow.box.Text = num
 	if num then
 		setSpeed = num
-		task.wait()
-		hmd.WalkSpeed = num
+		setwalkspeed(hmd)
 	end
 end)
 hmd:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-	if hmd.WalkSpeed ~= setSpeed then
-		hmd.WalkSpeed = setSpeed
-	end
+	setwalkspeed(hmd)
 end)
 
-local setJumpheight = hmd.JumpHeight
 local jumpheightRow = input:Clone()
 jumpheightRow.Visible = true
 jumpheightRow.Parent = main
@@ -280,14 +300,11 @@ jumpheightRow.box.FocusLost:Connect(function()
 	jumpheightRow.box.Text = num
 	if num then
 		setJumpheight = num
-		task.wait()
-		hmd.JumpHeight = num
+		setjumpheight(hmd)
 	end
 end)
 hmd:GetPropertyChangedSignal("JumpHeight"):Connect(function()
-	if hmd.JumpHeight ~= setJumpheight then
-		hmd.JumpHeight = setJumpheight
-	end
+	setjumpheight(hmd)
 end)
 
 local flyspeed = 1
@@ -356,6 +373,11 @@ ghostRow.desc.Text = "Ghost"
 ghosthider = ghostRow.button.hider
 ghosthider:GetPropertyChangedSignal("Visible"):Connect(function()
 	ghostVis = ghosthider.Visible
+end)
+cam:GetPropertyChangedSignal("CameraSubject"):Connect(function()
+	if not ghosthider.Visible then
+		cam.CameraSubject = ghostPart
+	end
 end)
 ghostRow.button.MouseButton1Down:Connect(function()
 	ghosthider.Visible = not ghosthider.Visible
@@ -579,6 +601,7 @@ targetRow.box.FocusLost:Connect(function()
 			targetPlayer = partial
 		end
 	else
+		targetPlayer = nil
 		followhider.Visible = true
 	end
 end)
@@ -590,16 +613,22 @@ followRow.LayoutOrder = 12
 followRow.desc.Text = "Follow target"
 followhider = followRow.button.hider
 followRow.button.MouseButton1Down:Connect(function()
-	followhider.Visible = not followhider.Visible
-	if not followhider.Visible then
-		local hmrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart") or nil
-		hmrp:GetPropertyChangedSignal("Parent"):Once(function()
-			followhider.Visible = true
-		end)
-		repeat
-			task.wait()
-			hrp.CFrame = hmrp.CFrame
-		until followhider.Visible
+	if targetPlayer then
+		followhider.Visible = not followhider.Visible
+		if not followhider.Visible then
+			local hmrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart") or nil
+			if not hmrp then
+				followhider.Visible = true
+				return
+			end
+			hmrp.Destroying:Connect(function()
+				followhider.Visible = true
+			end)
+			repeat
+				task.wait()
+				hrp.CFrame = hmrp.CFrame
+			until followhider.Visible
+		end
 	end
 end)
 

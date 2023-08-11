@@ -6,31 +6,37 @@ plr.CharacterAdded:Connect(function(char)
 	chr = char
 	hrp = char:WaitForChild("HumanoidRootPart")
 end)
-
+local plrs = {}
+for i,v in pairs(players:GetChildren()) do
+	table.insert(plrs,v.Character or v.CharacterAdded:Wait())
+end
 local parts = {}
 for i,v in pairs(workspace:GetDescendants()) do
-	if v:IsA("BasePart") and v.Transparency < 1 and v.Size.X < 250 and v.Size.Y < 250 and v.Size.Z < 250 then
-		table.insert(parts,v)
+	if v:IsA("BasePart") and not table.find(plrs,v.Parent) and v.Transparency < 1 and v.Size.X < 250 and v.Size.Y < 500 and v.Size.Z < 250 then
+		table.insert(parts,{v,v.Transparency})
 		v.Destroying:Connect(function()
 			table.remove(parts,table.find(parts,v))
 		end)
 	end
 end
-for i,v in pairs(game:GetService("Lighting"):GetChildren()) do
-	v:Destroy()
-end
-
+local lighting = game:GetService("Lighting")
+lighting:ClearAllChildren()
+lighting.ChildAdded:Connect(function(child)
+	wait()
+	child:Destroy()
+end)
 local oldPos = hrp.Position
-while wait(2) do
+while wait() do
 	local pos = hrp.Position
 	if (pos-oldPos).Magnitude > 50 then
 		oldPos = pos
 		for i,v in pairs(parts) do
+			local part = v[1]
 			task.wait()
-			if (v.Position-pos).Magnitude>300 then
-				v.Transparency = 1
+			if (part.Position-pos).Magnitude>300 then
+				part.Transparency = 1
 			else
-				v.Transparency = 0
+				part.Transparency = v[2]
 			end
 		end
 	end

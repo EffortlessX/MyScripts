@@ -533,13 +533,8 @@ local standardCancollide = {}
 local noclipRow = toggle:Clone()
 local nocliphider = noclipRow.button.hider
 for i,v in pairs(chr:GetChildren()) do
-	if (v:IsA("MeshPart") or v:IsA("Part")) and v.CanCollide then
+	if v:IsA("BasePart") and v.CanCollide then
 		table.insert(standardCancollide,v)
-		v:GetPropertyChangedSignal("CanCollide"):Connect(function()
-			if nocliphider.Visible == false then
-				v.CanCollide = false
-			end
-		end)
 	end
 end
 noclipRow.Visible = true
@@ -548,21 +543,15 @@ noclipRow.LayoutOrder = 9
 noclipRow.desc.Text = "Noclip"
 noclipRow.button.MouseButton1Down:Connect(function()
 	nocliphider.Visible = not nocliphider.Visible
-	if nocliphider.Visible == false then
-		for i,v in pairs(chr:GetChildren()) do
-			if v:IsA("MeshPart") or v:IsA("Part") then
-				v.CanCollide = false
-			end
-		end
+	if not nocliphider.Visible then
 		repeat
 			wait()
 			for i,v in pairs(standardCancollide) do
-				if v.CanCollide then
-					v.CanCollide = false
-				end
+				v.CanCollide = false
 			end
 		until nocliphider.Visible
 	else
+		wait(0.5)
 		for i,v in pairs(standardCancollide) do
 			v.CanCollide = true
 		end

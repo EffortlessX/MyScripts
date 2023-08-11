@@ -12,7 +12,7 @@ for i,v in pairs(players:GetChildren()) do
 end
 local parts = {}
 for i,v in pairs(workspace:GetDescendants()) do
-	if v:IsA("BasePart") and not table.find(plrs,v.Parent) and v.Transparency < 1 and v.Size.X < 250 and v.Size.Y < 500 and v.Size.Z < 250 then
+	if v:IsA("BasePart") and not table.find(plrs,v.Parent) and v.Transparency < 1 and v.Size.X < 100 and v.Size.Z < 100 then
 		table.insert(parts,{v,v.Transparency})
 		v.Destroying:Connect(function()
 			table.remove(parts,table.find(parts,v))
@@ -25,15 +25,15 @@ lighting.ChildAdded:Connect(function(child)
 	wait()
 	child:Destroy()
 end)
-local oldPos = hrp.Position
+local oldPos = Vector3.new(0,-100,0)
 while wait() do
 	local pos = hrp.Position
-	if (pos-oldPos).Magnitude > 50 then
+	if (pos-oldPos).Magnitude > 20 then
 		oldPos = pos
 		for i,v in pairs(parts) do
 			local part = v[1]
 			task.wait()
-			if (part.Position-pos).Magnitude>300 then
+			if (part.Position-pos).Magnitude>150 then
 				part.Transparency = 1
 			else
 				part.Transparency = v[2]

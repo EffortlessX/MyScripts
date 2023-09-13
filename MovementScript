@@ -105,6 +105,7 @@ box.Position = UDim2.new(0.02,0,0,0)
 box.TextColor3 = Color3.fromRGB(200,200,200)
 box.Text = ""
 box.TextScaled = true
+box.ClearTextOnFocus = false
 Instance.new("UICorner",box).CornerRadius = UDim.new(0.3,0)
 
 local desc = Instance.new("TextLabel",input)
@@ -115,6 +116,57 @@ desc.Position = UDim2.new(0.15,0,0,0)
 desc.TextColor3 = Color3.fromRGB(200,200,200)
 desc.TextScaled = true
 desc.TextXAlignment = Enum.TextXAlignment.Right
+
+local main
+local order = 0
+
+local function createRow(sort: string, desc: string, boxText: string?, large: boolean?)
+	local row = presets[sort]:Clone()
+	row.Visible = true
+	row.Parent = main
+	row.LayoutOrder = order
+	order += 1
+	row:WaitForChild("desc").Text = desc
+	if sort == "input"then
+		local box = row:WaitForChild("box")
+		if boxText then
+			box.Text = boxText
+		end
+		if large then
+			box.Size = UDim2.new(0,110,1,0)
+		end
+	end
+	return row
+end
+
+local function setFuncs(row: Frame, ...: any)
+	if row.Name == "input" then
+		for _, func in pairs({...}) do
+			local box = row:WaitForChild("box")
+			local lastText = box.Text
+			box.Focused:Connect(function()
+				lastText = box.Text
+				box.Text = ""
+			end)
+			box.FocusLost:Connect(function(enter)
+				if enter then
+					func()
+				else
+					box.Text = lastText
+				end
+			end)
+		end
+	elseif row.Name == "toggle" then
+		for _, func in pairs({...}) do
+			local button = row:WaitForChild("button")
+			local hider = button:WaitForChild("hider")
+			button.MouseButton1Down:Connect(function()
+				hider.Visible = not hider.Visible
+				func()
+			end)
+		end
+	end
+end
 
 -- CREATING GUI --
 
@@ -170,7 +222,7 @@ text.Text = "Movement hacks"
 text.TextColor3 = Color3.fromRGB(200,200,200)
 text.TextScaled = true
 
-local main = Instance.new("ScrollingFrame",bg)
+main = Instance.new("ScrollingFrame",bg)
 main.BackgroundTransparency = 1
 main.Size = UDim2.new(1,0,0.8,0)
 main.Position = UDim2.new(0,0,0.1,0)
@@ -248,98 +300,74 @@ uis.InputEnded:Connect(function(key)
 	end
 end)
 
-local teleportRow = input:Clone()
-teleportRow.Visible = true
-teleportRow.Parent = main
-teleportRow.LayoutOrder = 0
-teleportRow.desc.Text = "Teleport to"
-teleportRow.box.Size = UDim2.new(0,110,1,0)
-teleportRow.box.FocusLost:Connect(function()
-	local name = string.lower(string.gsub(teleportRow.box.Text," ",""))
+local function getPlayer(name)
 	if name ~= "" then
 		local partial = nil
 		for _,player in pairs(players:GetChildren()) do
 			local lowername = string.lower(player.Name)
 			if string.match(lowername,name) then
 				if lowername == name then
-					local hmrp = player.Character:FindFirstChild("HumanoidRootPart") or nil
-					if hmrp then
-						hrp.CFrame = hmrp.CFrame
-						teleportRow.box.Text = player.Name
-						partial = nil
-						break
-					end
+					return player
 				else
 					partial = player
 				end
 			end
 		end
 		if partial then
-			local hmrp = partial.Character:FindFirstChild("HumanoidRootPart") or nil
-			if hmrp then
-				hrp.CFrame = hmrp.CFrame
-				teleportRow.box.Text = partial.Name
-			end
+			return partial
 		end
 	end
-end)
+	return nil
+end
 
-local walkspeedRow = input:Clone()
-walkspeedRow.Visible = true
-walkspeedRow.Parent = main
-walkspeedRow.LayoutOrder = 1
-walkspeedRow.desc.Text = "Walkspeed"
-walkspeedRow.box.Text = math.round(setSpeed*10)/10
-walkspeedRow.box.FocusLost:Connect(function()
+
+local teleportRow = createRow("input", "Teleport to", "", true)
+local teleportBox = teleportRow:WaitForChild("box")
+local function teleportFunc()
+	local plr = getPlayer(box.Text)
+	if plr then
+		box.Text = plr.Name
+		if plr.Character and plr.Character.PrimaryPart then
+			hrp.CFrame = plr.Character:GetPrimaryPartCFrame()
+		end
+	end
+end
+setFuncs(teleportRow, teleportFunc)
+
+local walkspeedRow = createRow("input", "Walkspeed", tostring(math.round(tonumber(setSpeed)*10)/10))
+local function walkspeedFunc()
 	local num = math.round(tonumber(walkspeedRow.box.Text)*10)/10
 	walkspeedRow.box.Text = num
 	if num then
 		setSpeed = num
 		setwalkspeed(hmd)
 	end
-end)
-hmd:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-	setwalkspeed(hmd)
-end)
+end
+setFuncs(walkspeedRow, walkspeedFunc)
 
-local jumpheightRow = input:Clone()
-jumpheightRow.Visible = true
-jumpheightRow.Parent = main
-jumpheightRow.LayoutOrder = 2
-jumpheightRow.desc.Text = "Jump height"
-jumpheightRow.box.Text = math.round(setJumpheight*10)/10
-jumpheightRow.box.FocusLost:Connect(function()
+local jumpheightRow = createRow("input", "Jump height", tostring(math.round(setJumpheight*10)/10))
+local function jumpheightFunc()
 	local num = math.round(tonumber(jumpheightRow.box.Text)*10)/10
 	jumpheightRow.box.Text = num
 	if num then
 		setJumpheight = num
 		setjumpheight(hmd)
 	end
-end)
-hmd:GetPropertyChangedSignal("JumpHeight"):Connect(function()
-	setjumpheight(hmd)
-end)
+end
+setFuncs(jumpheightRow, jumpheightFunc)
 
 local flyspeed = 1
-local flyspeedRow = input:Clone()
-flyspeedRow.Visible = true
-flyspeedRow.Parent = main
-flyspeedRow.LayoutOrder = 3
-flyspeedRow.desc.Text = "Fly speed"
-flyspeedRow.box.Text = 1
-flyspeedRow.box.FocusLost:Connect(function()
+local flyspeedRow = createRow("input", "Fly speed", "1")
+local function flyspeedFunc()
 	local num = tonumber(flyspeedRow.box.Text)
 	if num then
 		flyspeed = num
 	end
-end)
+end
+setFuncs(flyspeedRow, flyspeedFunc)
 
-local flyRow = toggle:Clone()
-flyRow.Visible = true
-flyRow.Parent = main
-flyRow.LayoutOrder = 4
-flyRow.desc.Text = "Fly - invisible"
-local flyhider = flyRow.button.hider
+local flyRow = createRow("toggle", "Fly (invisible)")
+local flyhider = flyRow:WaitForChild("button"):WaitForChild("hider")
 local ghosthider
 local anchorhider
 local flyVis = true
@@ -347,9 +375,7 @@ local ghostVis = true
 flyhider:GetPropertyChangedSignal("Visible"):Connect(function()
 	flyVis = flyhider.Visible
 end)
-flyRow.button.MouseButton1Down:Connect(function()
-	flyhider.Visible = not flyhider.Visible
-	wait()
+local function flyFunc()
 	if flyVis and anchorhider.Visible then
 		checkFloor()
 		stopMovement()
@@ -370,7 +396,8 @@ flyRow.button.MouseButton1Down:Connect(function()
 	else
 		flyhider.Visible = true
 	end
-end) 
+end
+setFuncs(flyRow, flyFunc)
 
 local ghostPart = Instance.new("Part",workspace)
 ghostPart.Size = Vector3.new(1,1,1)
@@ -380,12 +407,8 @@ ghostPart.CanQuery = false
 ghostPart.CanCollide = false
 ghostPart.CanTouch = false
 local oldCamsubject = nil
-local ghostRow = toggle:Clone()
-ghostRow.Visible = true
-ghostRow.Parent = main
-ghostRow.LayoutOrder = 5
-ghostRow.desc.Text = "Ghost"
-ghosthider = ghostRow.button.hider
+local ghostRow = createRow("toggle", "Ghost")
+ghosthider = ghostRow:WaitForChild("button"):WaitForChild("hider")
 ghosthider:GetPropertyChangedSignal("Visible"):Connect(function()
 	ghostVis = ghosthider.Visible
 end)
@@ -394,9 +417,7 @@ cam:GetPropertyChangedSignal("CameraSubject"):Connect(function()
 		cam.CameraSubject = ghostPart
 	end
 end)
-ghostRow.button.MouseButton1Down:Connect(function()
-	ghosthider.Visible = not ghosthider.Visible
-	wait()
+local function ghostFunc()
 	if ghostVis then
 		if anchorhider.Visible then
 			hrp.Anchored = false
@@ -423,50 +444,45 @@ ghostRow.button.MouseButton1Down:Connect(function()
 	else
 		ghosthider.Visible = true
 	end
-end) 
+end
+setFuncs(ghostRow, ghostFunc)
 
-local infjumpFunction
-local infjumpRow = toggle:Clone()
-infjumpRow.Visible = true
-infjumpRow.Parent = main
-infjumpRow.desc.Text = "Infinite jump"
-infjumpRow.LayoutOrder = 6
-local infjumphider = infjumpRow.button.hider
+local infjumpFunction = nil
+local infjumpRow = createRow("toggle", "Infinite jump")
+local infjumphider = infjumpRow:WaitForChild("button"):WaitForChild("hider")
 local safeinfjumphider
-infjumpRow.button.MouseButton1Down:Connect(function()
+local function infjumpFunc()
 	if safeinfjumphider.Visible then
-		infjumphider.Visible = not infjumphider.Visible
 		if infjumphider.Visible == false then
 			infjumpFunction = uis.JumpRequest:Connect(function()
 				hmd:ChangeState(Enum.HumanoidStateType.Jumping,true)
 			end)
-		else
+		elseif infjumpFunction then
 			infjumpFunction:Disconnect()
+			infjumpFunction = nil
 		end
 	end
-end)
+end
+setFuncs(infjumpRow, infjumpFunc)
 
-local safeinfjumpFunction
-local safeinfjumpRow = toggle:Clone()
-safeinfjumpRow.Visible = true
-safeinfjumpRow.Parent = main
-safeinfjumpRow.desc.Text = "Safe infinite jump"
-safeinfjumpRow.LayoutOrder = 7
-safeinfjumphider = safeinfjumpRow.button.hider
-safeinfjumpRow.button.MouseButton1Down:Connect(function()
+local safeinfjumpFunction = nil
+local safeinfjumpRow = createRow("toggle", "Safe infinite jump")
+safeinfjumphider = safeinfjumpRow:WaitForChild("button"):WaitForChild("hider")
+local function safeinfjumpFunc()
 	if infjumphider.Visible then
-		safeinfjumphider.Visible = not safeinfjumphider.Visible
 		if safeinfjumphider.Visible == false then
 			safeinfjumpFunction = uis.JumpRequest:Connect(function()
 				hmd:ChangeState(Enum.HumanoidStateType.Landed,true)
 				task.wait()
 				hmd:ChangeState(Enum.HumanoidStateType.Jumping,true)
 			end)
-		else
+		elseif safeinfjumpFunction then
 			safeinfjumpFunction:Disconnect()
+			safeinfjumpFunction = nil
 		end
 	end
-end)
+end
+setFuncs(safeinfjumpRow, safeinfjumpFunc)
 
 local clicktpFunction1
 local clicktpFunction2
@@ -489,14 +505,9 @@ workspace.ChildAdded:Connect(function(child)
 		end)
 	end
 end)
-local clicktpRow = toggle:Clone()
-clicktpRow.Visible = true
-clicktpRow.Parent = main
-clicktpRow.LayoutOrder = 8
-clicktpRow.desc.Text = "Ctrl click tp"
-local clicktphider = clicktpRow.button.hider
-clicktpRow.button.MouseButton1Down:Connect(function()
-	clicktphider.Visible = not clicktphider.Visible
+local clicktpRow = createRow("toggle", "Ctrl+click tp")
+local clicktphider = clicktpRow:WaitForChild("button"):WaitForChild("hider")
+local function clicktpFunc()
 	if clicktphider.Visible == false then
 		clicktpFunction1 = uis.InputBegan:Connect(function(input)
 			if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
@@ -519,7 +530,8 @@ clicktpRow.button.MouseButton1Down:Connect(function()
 		clicktpFunction2:Disconnect()
 		clicktpFunction3:Disconnect()
 	end
-end)
+end
+setFuncs(clicktpRow, clicktpFunc)
 
 for i,v in pairs(chr:GetChildren()) do
 	if v:IsA("MeshPart") then
@@ -530,19 +542,14 @@ for i,v in pairs(chr:GetChildren()) do
 	end
 end
 local standardCancollide = {}
-local noclipRow = toggle:Clone()
-local nocliphider = noclipRow.button.hider
+local noclipRow = createRow("toggle", "NoClip")
+local nocliphider = noclipRow:WaitForChild("button"):WaitForChild("hider")
 for i,v in pairs(chr:GetChildren()) do
 	if v:IsA("BasePart") and v.CanCollide then
 		table.insert(standardCancollide,v)
 	end
 end
-noclipRow.Visible = true
-noclipRow.Parent = main
-noclipRow.LayoutOrder = 9
-noclipRow.desc.Text = "Noclip"
-noclipRow.button.MouseButton1Down:Connect(function()
-	nocliphider.Visible = not nocliphider.Visible
+local function noclipFunc()
 	if not nocliphider.Visible then
 		repeat
 			wait()
@@ -556,22 +563,19 @@ noclipRow.button.MouseButton1Down:Connect(function()
 			v.CanCollide = true
 		end
 	end
-end)
+end
+setFuncs(noclipRow, noclipFunc)
 
-local anchorRow = toggle:Clone()
-anchorRow.Visible = true
-anchorRow.Parent = main
-anchorRow.LayoutOrder = 10
-anchorRow.desc.Text = "Anchor body"
-anchorhider = anchorRow.button.hider
-anchorRow.button.MouseButton1Down:Connect(function()
-	anchorhider.Visible = not anchorhider.Visible
+local anchorRow = createRow("toggle", "Anchor character")
+anchorhider = anchorRow:WaitForChild("button"):WaitForChild("hider")
+local function anchorFunc()
 	if anchorhider.Visible == false then
 		hrp.Anchored = true
 	elseif flyhider.Visible and ghosthider.Visible then
 		hrp.Anchored = false
 	end
-end)
+end
+setFuncs(anchorRow, anchorFunc)
 hrp:GetPropertyChangedSignal("Anchored"):Connect(function()
 	if anchorhider.Visible == false then
 		checkFloor()
@@ -582,46 +586,18 @@ end)
 
 local targetPlayer = nil
 local followhider
-local targetRow = teleportRow:Clone()
-targetRow.Parent = main
-targetRow.LayoutOrder = 11
-targetRow.desc.Text = "Target player"
-targetRow.box.FocusLost:Connect(function()
-	local name = string.lower(string.gsub(targetRow.box.Text," ",""))
-	if name ~= "" then
-		local partial = nil
-		for _,player in pairs(players:GetChildren()) do
-			local lowername = string.lower(player.Name)
-			if string.match(lowername,name) then
-				if lowername == name then
-					targetPlayer = player
-					targetRow.box.Text = player.Name
-					partial = nil
-					break
-				else
-					partial = player
-				end
-			end
-		end
-		if partial then
-			targetRow.box.Text = partial.Name
-			targetPlayer = partial
-		end
-	else
-		targetPlayer = nil
-		followhider.Visible = true
-	end
-end)
+local targetRow = createRow("input", "Target player", "", true)
+local targetBox = targetRow:WaitForChild("box")
+local function targetFunc()
+	targetPlayer = getPlayer(targetBox.Text)
+	targetBox.Text = targetPlayer.Name
+end
+setFuncs(targetRow, targetFunc)
 
-local followRow = toggle:Clone()
-followRow.Visible = true
-followRow.Parent = main
-followRow.LayoutOrder = 12
-followRow.desc.Text = "Follow target"
-followhider = followRow.button.hider
-followRow.button.MouseButton1Down:Connect(function()
+local followRow = createRow("toggle", "Follow target")
+followhider = followRow:WaitForChild("button"):WaitForChild("hider")
+local function followFunc()
 	if targetPlayer then
-		followhider.Visible = not followhider.Visible
 		if not followhider.Visible then
 			local hmrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart") or nil
 			if not hmrp then
@@ -638,7 +614,8 @@ followRow.button.MouseButton1Down:Connect(function()
 			until followhider.Visible
 		end
 	end
-end)
+end
+setFuncs(followRow, followFunc)
 
 resetVisibility = function()
 	for i,v in pairs(main:GetChildren()) do
